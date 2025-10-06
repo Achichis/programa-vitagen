@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharma Vitagen: Estudio Médico Digital</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* CHATBOT STYLES */
+        .chatbot-bubble {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #17a2b8;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-size: 28px;
+            z-index: 99999;
+            transition: transform 0.2s;
+        }
+        .chatbot-window {
+            position: fixed;
+            bottom: 90px;
+            right: 25px;
+            width: 300px;
+            max-height: 400px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden; 
+            transform: scale(0.1); 
+            transform-origin: bottom right; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 99998;
+        }
+        /* Clase de activación manejada por JavaScript */
+        .chatbot-window.open {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+        .chatbot-header {
+            background: #17a2b8;
+            color: white;
+            padding: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .chatbot-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+        }
+        .chatbot-input {
+            display: flex;
+            border-top: 1px solid #ddd;
+        }
+        .chatbot-input input {
+            flex: 1;
+            border: none;
+            padding: 10px;
+            font-size: 14px;
+            outline: none;
+        }
+        .chatbot-input button {
+            background: #17a2b8;
+            border: none;
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .chatbot-input button:hover {
+             background-color: #107e91;
+        }
+        .message {
+            margin: 5px 0;
+            padding: 8px 12px;
+            border-radius: 12px;
+            max-width: 85%;
+        }
+        .user-message {
+            background: #17a2b8;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 2px;
+        }
+        .bot-message {
+            background: #f1f1f1;
+            color: #333;
+            margin-right: auto;
+            border-bottom-left-radius: 2px;
+        }
+        
+        /* Estilo para el botón de WhatsApp dentro del chat */
+        .btn-whatsapp-chat {
+            display: block; 
+            padding: 8px 10px;
+            margin-top: 10px;
+            text-align: center;
+            background-color: #25D366; 
+            color: white !important;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: background-color 0.3s;
+            font-size: 13px;
+        }
+        .btn-whatsapp-chat:hover {
+            background-color: #128C7E;
+        }
+        .btn-whatsapp-chat i {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo-link">
+            <img src="src/logo.jpg" alt="Logo Pharma Vitagen" class="logo-img"> 
+           <h1 id="site-header-name">PHARMA VITAGEN</h1>
+        </a>
+        <nav class="nav-links">
+            <a href="doctores.html">Ver Médicos</a> 
+            <a href="agendar_cita.html">Agendar Cita</a>
+            <a href="ayuda.html">Ayuda</a>
+            <a href="registro/registro.html" id="btn-registro-nav">Registrarse</a>
+            <a href="login.html" id="btn-login-nav">Inicio de Sesión</a>
+            <a href="carrito.html" class="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">2</span> 
+            </a>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <h1 id="welcome-message-banner">Tu Salud, a un Clic. Encuentra y Agenda con Confianza.</h1>
+        <p>Los mejores profesionales de la salud, disponibles 24/7 para ti y tu familia.</p>
+        
+        <form action="doctores.html" method="GET" class="busqueda-rapida">
+            <input type="text" name="query" placeholder="Busca por Especialidad, Nombre o Síntoma..." required>
+            <button type="submit">Buscar</button>
+        </form>
+    </div>
+    
+    <div class="slider-container">
+        <h2>Servicios Destacados</h2>
+        <div class="slider-wrapper">
+            
+            <div class="opcion-card slider-item">
+                <i class="fas fa-pills" style="color: var(--color-claro);"></i>
+                <h3>Farmacia y Productos</h3>
+                <p>Compra tus medicamentos, vitaminas y suplementos esenciales con entrega a domicilio.</p>
+                <a href="farmacia.html" class="btn-card">Ir a la Farmacia</a>
+            </div>
+            
+            <div class="opcion-card slider-item">
+                <i class="fas fa-user-md" style="color: var(--color-principal);"></i>
+                <h3>Agendar Cita Médica</h3>
+                <p>Encuentra al especialista perfecto y reserva tu consulta de forma rápida y segura.</p>
+                <a href="agendar_cita.html" class="btn-card">Agendar Ahora</a>
+            </div>
+
+            <div class="opcion-card slider-item">
+                <i class="fas fa-headset" style="color: #17a2b8;"></i>
+                <h3>Soporte y Guías</h3>
+                <p>Revisa cómo usar la plataforma, preguntas frecuentes y contacta a nuestro equipo.</p>
+                <a href="ayuda.html" class="btn-card">Ver Guía y Ayuda</a>
+            </div>
+
+            <div class="opcion-card slider-item">
+                <i class="fas fa-briefcase-medical" style="color: #ffc107;"></i>
+                <h3>Únete como Doctor</h3>
+                <p>Digitaliza tu consultorio, expande tu alcance y gestiona tu agenda fácilmente.</p>
+                <a href="contratacion.html" class="btn-card">Contratación Médica</a>
+            </div>
+
+        </div>
+        <div class="slider-dots"></div>
+    </div>
+    <footer>
+        <p>&copy; 2025 <span id="footer-site-name">Pharma Vitagen</span>. Diseño con estilo geométrico.</p>
+    </footer>
+
+    <div class="chatbot-bubble" id="chatbot-bubble">
+        <i class="fas fa-comment-alt"></i>
+    </div>
+    <div class="chatbot-window" id="chatbot-window">
+        <div class="chatbot-header">Asistente Virtual</div>
+        <div class="chatbot-messages" id="chatbot-messages">
+            <div class="message bot-message">¡Hola! Soy tu asistente virtual. Pregunta por "cita", "farmacia" o "ayuda".</div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="chatbot-input-text" placeholder="Escribe tu mensaje...">
+            <button id="chatbot-send"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+    <script>
+        // SLIDER SCRIPT
+        const sliderWrapper = document.querySelector('.slider-wrapper');
+        const sliderItems = document.querySelectorAll('.slider-item');
+        const totalItems = sliderItems.length;
+        let currentIndex = 0;
+        const gap = 20; 
+        
+        function updateSlider() {
+            requestAnimationFrame(() => {
+                const itemWidth = sliderItems[0] ? sliderItems[0].offsetWidth : 0; 
+                const offset = -currentIndex * (itemWidth + gap); 
+                sliderWrapper.style.transform = `translateX(${offset}px)`;
+                updateDots();
+            });
+        }
+
+        function updateDots() {
+            const dotsContainer = document.querySelector('.slider-dots');
+            dotsContainer.innerHTML = '';
+            
+            if (totalItems > 3 || window.innerWidth <= 992) { 
+                for (let i = 0; i < totalItems; i++) {
+                    const dot = document.createElement('span');
+                    dot.classList.add('dot');
+                    if (i === currentIndex) {
+                        dot.classList.add('active');
+                    }
+                    dot.addEventListener('click', () => {
+                        currentIndex = i;
+                        updateSlider();
+                    });
+                    dotsContainer.appendChild(dot);
+                }
+            }
+        }
+
+        function autoSlide() {
+            currentIndex = (currentIndex + 1) % totalItems;
+            updateSlider();
+        }
+
+        window.addEventListener('load', () => {
+            updateSlider(); 
+            window.addEventListener('resize', updateSlider); 
+            setInterval(autoSlide, 5000); 
+        });
+        
+        setTimeout(updateSlider, 100); 
+        
+        // GLOBAL CONFIGURATION SCRIPT
+        const CONFIG_KEYS = {
+            SITE_NAME: 'config_site_name',
+            WELCOME_MSG: 'config_welcome_msg',
+            PHONE: 'config_pharmacy_phone'
+        };
+
+        const DEFAULT_CONFIG = {
+            [CONFIG_KEYS.SITE_NAME]: 'PHARMA VITAGEN',
+            [CONFIG_KEYS.WELCOME_MSG]: 'Tu Salud, a un Clic. Encuentra y Agenda con Confianza.'
+        };
+
+        function getConfigValue(key) {
+            const storedValue = localStorage.getItem(key);
+            return storedValue !== null ? storedValue : DEFAULT_CONFIG[key];
+        }
+
+        function aplicarConfiguracionIndex() {
+            const siteTitleElement = document.getElementById('site-header-name');
+            if (siteTitleElement) {
+                siteTitleElement.textContent = getConfigValue(CONFIG_KEYS.SITE_NAME);
+            }
+
+            const footerSiteName = document.getElementById('footer-site-name');
+            if (footerSiteName) {
+                footerSiteName.textContent = getConfigValue(CONFIG_KEYS.SITE_NAME);
+            }
+
+            const welcomeMsgElement = document.getElementById('welcome-message-banner');
+            if (welcomeMsgElement) {
+                welcomeMsgElement.textContent = getConfigValue(CONFIG_KEYS.WELCOME_MSG);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', aplicarConfiguracionIndex);
+    </script>
+    
+    <script>
+        
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // DOM Elements
+            const bubble = document.getElementById('chatbot-bubble');
+            const windowElement = document.getElementById('chatbot-window');
+            const messagesContainer = document.getElementById('chatbot-messages');
+            const sendBtn = document.getElementById('chatbot-send');
+            const input = document.getElementById('chatbot-input-text');
+
+            // Inventory Data
+            const INVENTARIO_SIMPLE = [
+                { nombre: 'Paracetamol 500mg (20 Tab)', precio: 25.50, link: 'farmacia.html' },
+                { nombre: 'Ibuprofeno 400mg (20 Tab)', precio: 38.00, link: 'farmacia.html' },
+                { nombre: 'Omeprazol 20mg (14 Cápsulas)', precio: 75.99, link: 'farmacia.html' },
+                { nombre: 'Neurobión B12 Forte', precio: 120.00, link: 'farmacia.html' },
+                { nombre: 'Pepto Bismol (Tabletas)', precio: 95.00, link: 'farmacia.html' },
+                { nombre: 'Agrifen (Antigripal)', precio: 22.00, link: 'farmacia.html' }
+            ];
+            
+            // Contact Number
+            const TELEFONO_CLINICA = '523345883001'; 
+
+
+            // EVENT LISTENERS
+            // Click event for bubble to open/close window
+            if (bubble && windowElement) {
+                bubble.addEventListener('click', () => {
+                    windowElement.classList.toggle('open'); 
+                    if (windowElement.classList.contains('open') && input) {
+                        input.focus();
+                    }
+                });
+            }
+
+            // Events for sending message (click and Enter key)
+            if (sendBtn && input && messagesContainer) {
+                sendBtn.addEventListener("click", () => { 
+                    const text = input.value.trim();
+                    if (text !== "") {
+                        addMessage(text, "user");
+                        input.value = "";
+                        botReply(text);
+                    }
+                });
+
+                input.addEventListener("keypress", (e) => {
+                    if (e.key === "Enter") {
+                        sendBtn.click();
+                    }
+                });
+            }
+
+            // HELPER FUNCTIONS
+            
+            function generarEnlaceWhatsApp(motivo) {
+                const mensajeBase = `¡Hola! Necesito ayuda con el siguiente tema: ${motivo}. Vengo del chatbot de Pharma Vitagen.`;
+                const mensajeCodificado = encodeURIComponent(mensajeBase);
+                return `https://wa.me/${TELEFONO_CLINICA}?text=${mensajeCodificado}`;
+            }
+
+            function addMessage(text, sender, isHtml = false) {
+                if (!messagesContainer) return; 
+
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', `${sender}-message`);
+                
+                if (isHtml) {
+                    messageDiv.innerHTML = text;
+                } else {
+                    messageDiv.textContent = text;
+                }
+                
+                messagesContainer.appendChild(messageDiv);
+                
+                // Auto-scroll to latest message
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            function botReply(userText) {
+                const lowerText = userText.toLowerCase();
+                let reply = "";
+                let replyIsHtml = false;
+                
+                // CSS class for buttons/links in responses
+                const btnClass = 'class="btn-whatsapp-chat"'; 
+
+                // Response Logic
+                if (lowerText.includes("cita") || lowerText.includes("agendar") || lowerText.includes("reagendar") || lowerText.includes("cancelar")) {
+                    const whatsappLink = generarEnlaceWhatsApp("Reagendar, agendar o consultar sobre una cita"); 
+                    reply = `
+                        Si deseas <strong>agendar, reagendar o cancelar</strong> una cita, haz clic en el botón para contactar a un asistente de manera rápida:
+                        <br>
+                        <a href="${whatsappLink}" target="_blank" ${btnClass}>
+                            <i class="fab fa-whatsapp"></i> Hablar con un Asistente
+                        </a>
+                    `;
+                    replyIsHtml = true;
+                } else if (lowerText.includes("farmacia") || lowerText.includes("productos")) {
+                    reply = `Aquí puedes ver nuestro catálogo completo: <a href="farmacia.html" ${btnClass}><i class="fas fa-pills"></i> Ir a Farmacia</a>`;
+                    replyIsHtml = true;
+                } else if (lowerText.includes("fiebre") || lowerText.includes("dolor") || lowerText.includes("cabeza")) {
+                    const prod = INVENTARIO_SIMPLE.find(p => p.nombre.includes('Paracetamol'));
+                    reply = `Para esos síntomas, recomendamos <strong>${prod.nombre}</strong> ($${prod.precio.toFixed(2)}). <a href="${prod.link}" ${btnClass}><i class="fas fa-shopping-cart"></i> Ver Producto</a>`;
+                    replyIsHtml = true;
+                } else if (lowerText.includes("gripa") || lowerText.includes("resfriado")) {
+                    const prod = INVENTARIO_SIMPLE.find(p => p.nombre.includes('Agrifen'));
+                    reply = `Prueba <strong>${prod.nombre}</strong> ($${prod.precio.toFixed(2)}). <a href="${prod.link}" ${btnClass}><i class="fas fa-shopping-cart"></i> Ver Producto</a>`;
+                    replyIsHtml = true;
+                } else if (lowerText.includes("hola") || lowerText.includes("ola") || lowerText.includes("ayuda")) {
+                    reply = '¡Hola! Soy tu asistente. ¿Cómo puedo ayudarte? Pregunta por "cita", "farmacia" o por algún síntoma como "dolor de cabeza".';
+                } else if (lowerText.includes("consulta rapida")) {
+                     reply = "ADVERTENCIA: esto solo es una recomendacion y no debe tomarse como una consulta medica. esto es solamente para dar una idea de que medicamentos puedes tomar ante sintomas simples, si los problemas persisten consulta a tu medico.";
+                } else if (lowerText.includes("doctores")) {
+                     reply = "Revisa nuestro catálogo de doctores para que puedas encontrar uno que se adecua a tus necesidades.";
+                } else {
+                    reply = "Lo siento, no entendí tu consulta. Pregunta por 'cita', 'farmacia' o 'ayuda'.";
+                }
+
+                // Delay for writing simulation
+                setTimeout(() => {
+                    addMessage(reply, "bot", replyIsHtml);
+                }, 800);
+            }
+        });
+        // End of chatbot script
+    </script>
+</body>
+</html>

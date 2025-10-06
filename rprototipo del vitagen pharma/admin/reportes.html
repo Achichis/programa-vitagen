@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes y Estadísticas - Admin</title>
+    <link rel="stylesheet" href="../styles.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .report-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .report-table th, .report-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            font-size: 0.95em;
+        }
+        .report-table th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        .metric-card {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+        }
+        .metric-item {
+            background-color: #e9f0ff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 30%;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--color-principal);
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header style="background-color: var(--color-principal);">
+        <a href="../index.html" class="logo-link">
+             <img src="../src/logo.jpg" alt="Logo Pharma Vitagen" class="logo-img">
+             <h1 style="color: white;"><i class="fas fa-user-shield"></i> PANEL ADMIN</h1>
+        </a>
+    </header>
+
+    <div class="content-page" style="padding-top: 20px;">
+        <h2 style="text-align: center;"><i class="fas fa-chart-line"></i> Reportes y Estadísticas de Uso</h2>
+        <p style="text-align: center; color: #6c757d; margin-bottom: 30px;">
+            Métricas clave generadas automáticamente del sistema.
+        </p>
+
+        <div class="report-container">
+            
+            <div class="metric-card">
+                <div class="metric-item">
+                    <p>Total de Pacientes</p>
+                    <div class="metric-value">105</div>
+                </div>
+                <div class="metric-item">
+                    <p>Citas Aprobadas (Mes)</p>
+                    <div class="metric-value">42</div>
+                </div>
+                <div class="metric-item">
+                    <p>Ventas Netas (Mes)</p>
+                    <div class="metric-value">$8,950</div>
+                </div>
+            </div>
+
+            <h3 style="border-bottom: 2px solid #eee; padding-bottom: 10px;">Citas por Doctor (Últimos 30 días)</h3>
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>Doctor</th>
+                        <th>Especialidad</th>
+                        <th>Citas Aprobadas</th>
+                        <th>Citas Pendientes</th>
+                        <th>Tasa de Éxito</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Dr. Juan Pérez</td>
+                        <td>Medicina General</td>
+                        <td>25</td>
+                        <td>3</td>
+                        <td>89%</td>
+                    </tr>
+                    <tr>
+                        <td>Dra. Ana García</td>
+                        <td>Dermatología</td>
+                        <td>12</td>
+                        <td>5</td>
+                        <td>70%</td>
+                    </tr>
+                    <tr>
+                        <td>Dr. Carlos Ruiz</td>
+                        <td>Pediatría</td>
+                        <td>5</td>
+                        <td>1</td>
+                        <td>83%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <a href="dashboard.html" class="btn-form-submit" style="width: 300px; margin: 40px auto 20px auto; background-color: var(--color-bloque-a);">
+            <i class="fas fa-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+
+    <footer><p>&copy; 2025 Pharma Vitagen.</p></footer>
+</body>
+</html>

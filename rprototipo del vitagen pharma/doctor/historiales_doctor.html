@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historiales Médicos - Dr. Pérez</title>
+    <link rel="stylesheet" href="../styles.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .historial-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .historial-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #1e3a8a;
+        }
+        .historial-item h4 {
+            margin-top: 0;
+            color: #1e3a8a;
+        }
+    </style>
+</head>
+<body>
+    <header style="background-color: #007bff;">
+        <a href="../index.html" class="logo-link">
+             <img src="../src/logo.jpg" alt="Logo Pharma Vitagen" class="logo-img">
+             <h1 style="color: white;"><i class="fas fa-user-md"></i> PANEL MÉDICO</h1>
+        </a>
+    </header>
+
+    <div class="content-page" style="padding-top: 20px;">
+        <h2 style="text-align: center;"><i class="fas fa-notes-medical"></i> Consulta de Historiales Médicos</h2>
+        <p style="text-align: center; color: #6c757d; margin-bottom: 30px;">
+            Busca un paciente para acceder a su historial de consultas y tratamientos.
+        </p>
+
+        <div class="historial-container">
+            <div class="form-group" style="display: flex; gap: 10px;">
+                <input type="text" placeholder="Buscar por Nombre o ID del Paciente" style="flex-grow: 1;">
+                <button class="btn-form-submit" style="width: 150px; background-color: #1e3a8a;">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </div>
+            
+            <h3 style="margin-top: 30px;">Resultados de Búsqueda (Ejemplo)</h3>
+            
+            <div class="historial-item">
+                <h4>Luis G. Fernández (ID: 101)</h4>
+                <p><strong>Última Consulta:</strong> 01/09/2025 - Control de Hipertensión.</p>
+                <p><strong>Diagnóstico:</strong> Estable, se ajusta dosis de Metoprolol.</p>
+                <button class="btn-action" style="background-color: #dc3545; margin-top: 10px;">Ver Historial Completo</button>
+            </div>
+            
+            <div class="historial-item">
+                <h4>Sofía M. Robles (ID: 102)</h4>
+                <p><strong>Última Consulta:</strong> 15/08/2025 - Revisión de alergias estacionales.</p>
+                <p><strong>Diagnóstico:</strong> Alergia controlada con Clorfenamina.</p>
+                <button class="btn-action" style="background-color: #dc3545; margin-top: 10px;">Ver Historial Completo</button>
+            </div>
+        </div>
+
+        <a href="dashboard.html" class="btn-form-submit" style="width: 300px; margin: 40px auto 20px auto; background-color: var(--color-bloque-a);">
+            <i class="fas fa-arrow-left"></i> Volver al Panel
+        </a>
+    </div>
+
+    <footer><p>&copy; 2025 Pharma Vitagen.</p></footer>
+</body>
+</html>

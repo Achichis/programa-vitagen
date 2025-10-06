@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial Médico - Pharma Vitagen</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo-link">
+            <img src="src/logo.jpg" alt="Logo Pharma Vitagen" class="logo-img">
+            <h1>PHARMA VITAGEN</h1>
+        </a>
+    </header>
+
+    <div class="content-page" style="padding-top: 20px;">
+        <h2 style="text-align: center;"><i class="fas fa-history"></i> Historial Médico Completo</h2>
+        <p style="text-align: center; color: #6c757d; margin-bottom: 30px;">
+            Este es un resumen cronológico de tus consultas y tratamientos.
+        </p>
+
+        <div id="historial-container" class="summary-cards" style="display: block; grid-template-columns: 1fr; gap: 20px;">
+            <p style="text-align: center;">Cargando historial...</p>
+        </div>
+        
+        <a href="paciente/dashboard.html" class="btn-form-submit" style="width: 300px; margin: 40px auto 20px auto; background-color: var(--color-principal);">
+            <i class="fas fa-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+
+    <footer><p>&copy; 2025 Pharma Vitagen.</p></footer>
+
+    <script>
+        // *** SIMULACIÓN DE DATOS DE HISTORIAL ***
+        // Este objeto simula una "base de datos" para mostrar diferentes datos por usuario
+        const DATOS_HISTORIAL = {
+            'laura@paciente.com': [
+                { fecha: '2025-09-15', doctor: 'Dr. Ruiz (Cardiología)', diagnostico: 'Control de rutina', tratamiento: 'Continuar con dieta baja en sodio.' },
+                { fecha: '2025-07-20', doctor: 'Dra. Elena Gómez (General)', diagnostico: 'Gripe estacional', tratamiento: 'Descanso y paracetamol por 5 días.' }
+            ],
+            // Si el usuario registrado no tiene historial, se le mostrará el de abajo:
+            'default': [
+                { fecha: '2025-10-01', doctor: 'Dr. Sistemas (Virtual)', diagnostico: 'Consulta inicial', tratamiento: 'Próxima cita programada.' }
+            ]
+        };
+
+        function cargarHistorial() {
+            const container = document.getElementById('historial-container');
+            const user = JSON.parse(localStorage.getItem('currentUser')) || {}; // Obtenemos el usuario actual
+            
+            // Usamos el historial del usuario, o el 'default' si no tiene datos
+            const historial = DATOS_HISTORIAL[user.correo] || DATOS_HISTORIAL['default'];
+            
+            let htmlContent = '';
+
+            historial.forEach(item => {
+                htmlContent += `
+                    <div class="card" style="border-left: 5px solid var(--color-principal); text-align: left; margin-bottom: 20px;">
+                        <h4 style="color: var(--color-principal); margin-bottom: 10px;">Consulta: ${item.fecha}</h4>
+                        <p><strong>Doctor:</strong> ${item.doctor}</p>
+                        <p><strong>Diagnóstico:</strong> ${item.diagnostico}</p>
+                        <p><strong>Tratamiento:</strong> ${item.tratamiento}</p>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = htmlContent;
+        }
+
+        // Ejecutar la función al cargar la página
+        cargarHistorial();
+    </script>
+</body>
+</html>

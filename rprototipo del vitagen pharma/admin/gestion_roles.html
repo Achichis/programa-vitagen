@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Roles y Cuentas - Admin</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"> 
+
+    <link rel="stylesheet" href="../../styles.css"> 
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* Deshabilitamos estilos de .content-page global para que el fondo gris se vea */
+        .admin-panel-content {
+            padding: 30px;
+            margin: 30px auto;
+            background-color: transparent; 
+            box-shadow: none; 
+            max-width: 1000px;
+        }
+
+        /* Contenedor principal de la lista de roles (Fondo blanco) */
+        .roles-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: var(--color-claro);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Estilos de lista de roles */
+        .role-section {
+            margin-bottom: 30px;
+            border-left: 5px solid var(--color-principal); 
+            padding-left: 15px;
+        }
+        .role-section h4 {
+            font-family: 'Poppins', sans-serif; 
+            font-weight: 700;
+            font-size: 1.2em;
+            color: var(--color-secundario);
+            margin-bottom: 15px;
+        }
+        .role-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .role-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Info del usuario */
+        .role-info-group {
+            display: flex;
+            align-items: center;
+        }
+        .role-name {
+            font-weight: bold;
+            color: #1e3a8a; /* Color azul fuerte para el nombre */
+        }
+        .role-status-info {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-left: 10px;
+        }
+
+        /* Contenedor de estado y botón */
+        .role-actions-group {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Indicador de Estado (Texto) */
+        .status-indicator {
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 0.9em;
+        }
+
+        /* Clases de colores para el indicador de estado */
+        .status-indicator.activo {
+            color: #28a745; /* Verde para Activo */
+        }
+        .status-indicator.bloqueado {
+            color: #dc3545; /* Rojo para Bloqueado */
+        }
+
+        /* Estilo Base del Botón de Acción */
+        .btn-role-action {
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        /* Clases de colores para el botón de acción */
+        .btn-role-action.bloquear {
+            background-color: #dc3545; /* Rojo para Bloquear */
+        }
+        .btn-role-action.activar {
+            background-color: #28a745; /* Verde para Activar */
+        }
+        .btn-role-action.bloquear:hover {
+            background-color: #c82333;
+        }
+        .btn-role-action.activar:hover {
+            background-color: #218838;
+        }
+
+        /* Estilo para el botón de Añadir Paciente */
+        .btn-add-patient {
+            background-color: var(--color-principal) !important;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            font-weight: 700;
+            text-align: center;
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        .btn-add-patient:hover {
+            background-color: #0056b3 !important;
+        }
+    </style>
+</head>
+<body>
+    
+    <header style="
+        background-color: var(--color-principal) !important; 
+        border-bottom: none !important; 
+        padding: 20px 5%; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center;
+    ">
+        <a href="../../index.html" style="
+            color: var(--color-claro) !important; 
+            text-decoration: none !important; 
+            display: flex; 
+            align-items: center;
+        ">
+            <img src="../../src/logo.jpg" alt="Logo Pharma Vitagen" style="height: 50px; margin-right: 15px;">
+            <h1 style="color: var(--color-claro) !important; font-size: 1.8em; margin: 0;"><i class="fas fa-user-shield"></i> PANEL ADMIN</h1>
+        </a>
+    </header>
+
+    <div class="content-page admin-panel-content">
+        <h2 style="text-align: center; color: var(--color-principal);"><i class="fas fa-id-badge"></i> Administración de Cuentas por Rol</h2>
+        <p style="text-align: center; color: #6c757d; margin-bottom: 30px;">
+            Gestiona y bloquea/activa las cuentas de usuario de la plataforma.
+        </p>
+
+        <div class="roles-container">
+            
+            <div class="role-section">
+                <h4><i class="fas fa-user-shield"></i> Cuentas Administradores</h4>
+                <div class="role-item">
+                    <span class="role-name">Admin Principal (Tú)</span>
+                    <span class="role-status-info">Acceso Total al Sistema</span>
+                </div>
+            </div>
+
+            <div class="role-section">
+                <h4><i class="fas fa-user-md"></i> Cuentas de Doctores y Especialistas</h4>
+                <p class="role-status-info" style="margin-top: 5px;">
+                    La gestión de Doctores se realiza desde el módulo de inventario/Doctores.
+                </p>
+            </div>
+
+            <div class="role-section">
+                <h4><i class="fas fa-user"></i> Cuentas de Pacientes (Bloquear/Activar)</h4>
+                <div id="patient-list-container">
+                    <p style="text-align: center; color: #6c757d;">Cargando pacientes...</p>
+                </div>
+            </div>
+
+            <a href="../registro/registro.html" class="btn-add-patient">
+                <i class="fas fa-user-plus"></i> Añadir Nuevo Paciente (Manualmente)
+            </a>
+
+        </div>
+
+        <a href="dashboard.html" class="btn-form-submit" style="width: 300px; margin: 40px auto 20px auto; background-color: var(--color-bloque-a);">
+            <i class="fas fa-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+
+    <footer><p>&copy; 2025 Pharma Vitagen.</p></footer>
+
+    <script>
+        const USUARIOS_STORAGE_KEY = 'usuarios';
+
+        function obtenerListaMaestra() {
+            let usuarios = JSON.parse(localStorage.getItem(USUARIOS_STORAGE_KEY));
+            
+            // Inicializa con datos de prueba si no hay usuarios o si faltan datos esenciales.
+            if (!usuarios || usuarios.length === 0 || !usuarios.some(u => u.rol === 'paciente')) {
+                const datosIniciales = [
+                    { correo: 'luis@vitagen.com', nombre: 'Luis Guillermo', rol: 'paciente', activo: true },
+                    { correo: 'mario@ejemplo.com', nombre: 'Mario Diaz', rol: 'paciente', activo: false },
+                    { correo: 'ana@ejemplo.com', nombre: 'Ana Fernandez', rol: 'paciente', activo: true },
+                    { correo: 'admin@vitagen.com', nombre: 'Admin Master', rol: 'administrador', activo: true }
+                ];
+                guardarListaMaestra(datosIniciales);
+                return datosIniciales;
+            }
+            return usuarios;
+        }
+
+        function guardarListaMaestra(usuarios) {
+            localStorage.setItem(USUARIOS_STORAGE_KEY, JSON.stringify(usuarios));
+        }
+
+        function cargarPacientes() {
+            const container = document.getElementById('patient-list-container');
+            const usuarios = obtenerListaMaestra(); 
+            
+            const pacientes = usuarios.filter(user => user.rol === 'paciente');
+            
+            let listHTML = '';
+
+            if (pacientes.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #6c757d;">No hay pacientes registrados aún.</p>';
+                return;
+            }
+
+            pacientes.forEach(paciente => {
+                // Si la propiedad activo no existe, asumimos que es true
+                const activo = paciente.activo !== undefined ? paciente.activo : true; 
+                
+                // Asignamos clases y textos basados en el estado (limpio y modular)
+                const statusClass = activo ? 'activo' : 'bloqueado';
+                const statusText = activo ? 'Activa' : 'Bloqueada';
+                
+                // Si está activo, el botón debe ser para BLOQUEAR (clase: bloquear)
+                // Si está bloqueado, el botón debe ser para ACTIVAR (clase: activar)
+                const buttonClass = activo ? 'bloquear' : 'activar';
+                const buttonText = activo ? 'Bloquear' : 'Activar';
+
+                listHTML += `
+                    <div class="role-item">
+                        <div class="role-info-group">
+                            <span class="role-name">${paciente.nombre || 'Paciente Nuevo'}</span>
+                            <span class="role-status-info">(${paciente.correo})</span>
+                        </div>
+                        <div class="role-actions-group">
+                            <span class="status-indicator ${statusClass}">
+                                Cuenta: ${statusText}
+                            </span>
+                            <button class="btn-role-action ${buttonClass}" 
+                                onclick="cambiarEstado('${paciente.correo}', ${activo})">
+                                ${buttonText}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = listHTML;
+        }
+
+        function cambiarEstado(correo, estadoActual) {
+            let usuarios = obtenerListaMaestra();
+            
+            const nuevosUsuarios = usuarios.map(u => {
+                if (u.correo === correo) {
+                    // Invierte el estado
+                    u.activo = !estadoActual; 
+                }
+                return u;
+            });
+
+            guardarListaMaestra(nuevosUsuarios);
+            cargarPacientes();
+            
+            alert(`El estado de la cuenta para ${correo} ha sido cambiado a: ${!estadoActual ? 'Activa' : 'Bloqueada'}.`);
+        }
+        
+        document.addEventListener('DOMContentLoaded', cargarPacientes);
+    </script>
+</body>
+</html>

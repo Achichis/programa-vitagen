@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="detalle-titulo">Detalle del Producto</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Estilos CSS específicos para la página de detalle */
+        .producto-detalle {
+            display: flex;
+            gap: 40px;
+            padding: 30px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .producto-detalle img {
+            max-width: 40%;
+            height: auto;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+        .info-producto {
+            flex-grow: 1;
+        }
+        .precio-detalle {
+            font-size: 2em;
+            color: #007bff;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        .descripcion {
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        .btn-add-cart {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn-add-cart:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo-link">
+            <img src="src/logo.jpg" alt="Logo Pharma Vitagen" class="logo-img"> 
+            <h1>PHARMA VITAGEN</h1>
+        </a>
+        <nav class="nav-links">
+            <a href="agendar_cita.html">📅 Agendar Cita</a>
+            <a href="ayuda.html">Ayuda</a>
+            <a href="login.html" id="btn-login-nav">🔑 Inicio de Sesión</a>
+            <a href="carrito.html" class="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count" id="cart-count-header">0</span>
+            </a>
+        </nav>
+    </header>
+
+    <div class="content-page">
+        <a href="farmacia.html" style="margin-bottom: 20px; display: inline-block;"><i class="fas fa-arrow-left"></i> Volver a la Farmacia</a>
+        
+        <div class="producto-detalle" id="producto-detalle-container">
+            Cargando detalles del producto...
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Pharma Vitagen. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        const PRODUCT_STORAGE_KEY = 'inventario';
+        const CARRITO_STORAGE_KEY = 'carritoItems';
+        
+        // Mapeo de nombres de productos a sus URLs de imagen
+        const IMAGE_MAP = {
+            'Paracetamol 500mg (20 Tab)': 'src/paracetamol.jpg',
+            'Ibuprofeno 400mg (20 Tab)': 'src/ibuprofeno.jpg',
+            'Omeprazol 20mg (14 Cápsulas)': 'src/omeprazol.jpg',
+            'Neurobión B12 Forte': 'src/Dolo-Neurobion.jpg',
+            'Pepto Bismol (Tabletas)': 'src/pepto-bismol.jpg',
+            'Salbutamol (Inhalador)': 'src/Salbutamol.jpg',
+            'Treda (Antidiarreico)': 'src/Treda.jpg',
+            'Metoprolol 50mg (30 Tab)': 'src/metroprolol.jpg',
+            'Agrifen (Antigripal)': 'src/agrifen.jpg',
+            'MEMBITROL (TINIDAZOL 1 GR) (antibacteriano)': 'src/membitrol.jpg',
+            'ceftriazona (antibiotico)': 'src/ceftriazona.jpg'
+        };
+
+        // Descripciones simples para cada producto (puedes expandirlas después)
+        const DESCRIPTIONS = {
+            'Paracetamol 500mg (20 Tab)': 'Medicamento indicado para el alivio temporal de dolores de cabeza, dolores musculares, dolor de muelas y fiebre. Presentación: Caja con 20 tabletas.',
+            'Ibuprofeno 400mg (20 Tab)': 'Analgesico y Antiinflamatorio, ideal para dolores leves a moderados, como dolor de muelas y molestias menstruales. Presentación: Caja con 20 tabletas.',
+            'Omeprazol 20mg (14 Cápsulas)': 'Protección gástrica. Inhibidor de la bomba de protones, usado para tratar el ardor estomacal frecuente. Presentación: Caja con 14 Cápsulas.',
+            'Neurobión B12 Forte': 'Suplemento vitamínico complejo B que ayuda a la función nerviosa y muscular. Recomendado para fatiga o deficiencia de vitaminas B.',
+            'Pepto Bismol (Tabletas)': 'Alivia la acidez, indigestión, malestar estomacal, náuseas y diarrea.',
+            'Salbutamol (Inhalador)': 'Broncodilatador de acción rápida para el alivio de los síntomas del asma y la EPOC.',
+            'Treda (Antidiarreico)': 'Medicamento antidiarreico y antiséptico intestinal de amplio espectro.',
+            'Metoprolol 50mg (30 Tab)': 'Medicamento utilizado para tratar la presión arterial alta (hipertensión) y prevenir la angina de pecho. Requiere receta médica.',
+            'Agrifen (Antigripal)': 'Alivio rápido de los síntomas del resfriado y la gripe, incluyendo congestión nasal y fiebre.',
+            'MEMBITROL (TINIDAZOL 1 GR) (antibacteriano)': 'Tratamiento efectivo contra diversas infecciones bacterianas y parasitarias. Requiere receta médica.',
+            'ceftriazona (antibiotico)': 'Antibiótico de amplio espectro, usado para tratar infecciones graves. Requiere prescripción médica.'
+        };
+
+
+        // =========================================================================
+        // 1. FUNCIÓN PARA LEER EL PRODUCTO DE LA URL
+        // =========================================================================
+        function obtenerNombreProductoDeUrl() {
+            const params = new URLSearchParams(window.location.search);
+            // El nombre del producto viene codificado en la URL (parámetro 'producto')
+            return decodeURIComponent(params.get('producto'));
+        }
+
+        // =========================================================================
+        // 2. FUNCIÓN PARA CARGAR EL DETALLE DINÁMICAMENTE
+        // =========================================================================
+        function cargarDetalleProducto() {
+            const nombreProducto = obtenerNombreProductoDeUrl();
+            const container = document.getElementById('producto-detalle-container');
+            const inventario = JSON.parse(localStorage.getItem(PRODUCT_STORAGE_KEY)) || [];
+            
+            // Buscar el producto en el inventario
+            const producto = inventario.find(item => item.nombre === nombreProducto);
+
+            if (!producto) {
+                container.innerHTML = `
+                    <div style="text-align: center; width: 100%;">
+                        <h2>Producto no encontrado</h2>
+                        <p>Lo sentimos, el producto "${nombreProducto}" no está disponible en nuestro inventario.</p>
+                    </div>
+                `;
+                document.getElementById('detalle-titulo').textContent = 'Error - Producto No Encontrado';
+                return;
+            }
+            
+            // Producto encontrado, cargar los detalles
+            const imageUrl = IMAGE_MAP[producto.nombre] || 'https://via.placeholder.com/250x250?text=Imagen+No+Disp.';
+            const descripcionCompleta = DESCRIPTIONS[producto.nombre] || 'Consulte la ficha técnica para más detalles del medicamento.';
+            const disponibilidad = producto.existencia > 0 ? 'Disponible en stock' : 'Temporalmente agotado';
+
+
+            container.innerHTML = `
+                <img src="${imageUrl}" alt="${producto.nombre}" class="producto-img">
+                
+                <div class="info-producto">
+                    <h2>${producto.nombre}</h2>
+                    <p style="color: green; font-weight: bold;">${disponibilidad}</p>
+                    <div class="precio-detalle">$${producto.precio.toFixed(2)}</div>
+                    
+                    <p class="descripcion">${descripcionCompleta}</p>
+                    
+                    <div class="form-group">
+                        <label for="cantidad">Cantidad:</label>
+                        <input type="number" id="cantidad" name="cantidad" value="1" min="1" style="width: 100px; margin-right: 15px;">
+                    </div>
+                    
+                    <a href="#" class="btn-add-cart" onclick="añadirAlCarritoDesdeDetalle('${producto.nombre}', ${producto.precio}, event)">🛒 Añadir al Carrito</a>
+                </div>
+            `;
+            
+            // Actualizar el título de la página
+            document.getElementById('detalle-titulo').textContent = `Detalle de ${producto.nombre}`;
+        }
+        
+        // =========================================================================
+        // 3. FUNCIÓN: AÑADIR AL CARRITO (Desde la página de detalle)
+        // =========================================================================
+        function añadirAlCarritoDesdeDetalle(nombreProducto, precioProducto, event) {
+            event.preventDefault(); 
+            
+            const cantidad = parseInt(document.getElementById('cantidad').value) || 1;
+            
+            let carrito = JSON.parse(localStorage.getItem(CARRITO_STORAGE_KEY)) || [];
+            const itemExistente = carrito.find(item => item.nombre === nombreProducto);
+
+            if (itemExistente) {
+                itemExistente.cantidad += cantidad;
+            } else {
+                carrito.push({
+                    nombre: nombreProducto,
+                    precio: precioProducto,
+                    cantidad: cantidad,
+                });
+            }
+
+            localStorage.setItem(CARRITO_STORAGE_KEY, JSON.stringify(carrito));
+            
+            alert(`✅ ¡${cantidad} unidad(es) de ${nombreProducto} añadido(s) al carrito!`);
+            
+            // Llama a la función para actualizar el contador del carrito en el header
+            actualizarContadorCarrito();
+        }
+
+        // =========================================================================
+        // 4. FUNCIÓN PARA ACTUALIZAR EL CONTADOR DEL CARRITO (Necesario aquí también)
+        // =========================================================================
+        function actualizarContadorCarrito() {
+            const carrito = JSON.parse(localStorage.getItem(CARRITO_STORAGE_KEY)) || [];
+            const countSpan = document.getElementById('cart-count-header');
+            if (countSpan) {
+                countSpan.textContent = carrito.length;
+            }
+        }
+        
+        // Ejecutar las funciones al cargar la página
+        cargarDetalleProducto();
+        actualizarContadorCarrito();
+    </script>
+</body>
+</html>

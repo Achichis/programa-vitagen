@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Pacientes - Doctor</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .paciente-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <header style="background-color: var(--color-secundario);">
+        <a href="index.html" class="logo-link">
+             <img src="src/logo.jpg" alt="Logo Pharma Vitagen" class="logo-img">
+             <h1 style="color: white;"><i class="fas fa-user-md"></i> PHARMA VITAGEN</h1>
+        </a>
+    </header>
+
+    <div class="content-page" style="padding-top: 20px;">
+        <h2 style="text-align: center;"><i class="fas fa-search"></i> Búsqueda y Gestión de Pacientes</h2>
+        <p style="text-align: center; color: #6c757d; margin-bottom: 30px;">
+            Selecciona un paciente para ver su historial o subir resultados de laboratorio.
+        </p>
+        
+        <input type="text" id="busqueda" placeholder="Buscar por nombre o correo" style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc;">
+
+        <div id="lista-pacientes">
+            </div>
+
+        <a href="doctor/dashboard.html" class="btn-form-submit" style="width: 300px; margin: 40px auto 20px auto; background-color: var(--color-secundario);">
+            <i class="fas fa-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+
+    <footer><p>&copy; 2025 Pharma Vitagen.</p></footer>
+
+    <script>
+        function cargarPacientes() {
+            const container = document.getElementById('lista-pacientes');
+            // Solo cargamos los usuarios registrados como pacientes
+            const pacientes = (JSON.parse(localStorage.getItem('usuarios')) || []).filter(u => u.rol === 'paciente');
+            
+            let htmlContent = '';
+
+            if (pacientes.length === 0) {
+                htmlContent = '<p style="text-align: center; color: #dc3545;">No hay pacientes registrados.</p>';
+            } else {
+                pacientes.forEach(p => {
+                    htmlContent += `
+                        <div class="paciente-card">
+                            <div>
+                                <h4><i class="fas fa-user"></i> ${p.nombre}</h4>
+                                <p style="font-size: 0.9em; color: #6c757d;">${p.correo}</p>
+                            </div>
+                            <button class="btn-form-submit" onclick="simularSubidaResultado('${p.nombre}')" style="background-color: var(--color-secundario); padding: 8px 15px; margin: 0;">
+                                <i class="fas fa-upload"></i> Subir Resultado Lab
+                            </button>
+                        </div>
+                    `;
+                });
+            }
+
+            container.innerHTML = htmlContent;
+        }
+
+        function simularSubidaResultado(nombrePaciente) {
+            alert(`Simulando subida de resultado para el paciente: ${nombrePaciente}. \n\n¡La funcionalidad está lista para ser conectada a un formulario de subida!`);
+            // En una aplicación real, esto redirigiría a un formulario para subir un archivo.
+        }
+
+        document.getElementById('busqueda').addEventListener('input', function() {
+            // Lógica de búsqueda simplificada
+            const term = this.value.toLowerCase();
+            const cards = document.querySelectorAll('.paciente-card');
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(term) ? 'flex' : 'none';
+            });
+        });
+
+        cargarPacientes();
+    </script>
+</body>
+</html>

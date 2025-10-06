@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Doctores - Admin</title>
+    <link rel="stylesheet" href="../styles.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .doctor-grid {
+            display: flex;
+            gap: 30px;
+            max-width: 1000px;
+            margin: 40px auto;
+        }
+        .form-section-doctor {
+            flex: 1;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .doctor-list-section {
+            flex: 2;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            min-height: 400px;
+            background-color: #fff;
+        }
+        .doctor-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #eee;
+            background-color: #fff;
+            border-left: 5px solid #007bff; /* Color azul */
+        }
+        .doctor-info strong {
+            font-size: 1.1em;
+            color: #333;
+        }
+        .doctor-info p {
+            margin: 2px 0;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        .doctor-actions button {
+            margin-left: 10px;
+        }
+        .tag-specialty {
+            display: inline-block;
+            background-color: #e9f0ff;
+            color: #007bff;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header style="background-color: var(--color-principal);">
+        <a href="../index.html" class="logo-link">
+             <img src="../src/logo.jpg" alt="Logo Pharma Vitagen" class="logo-img">
+             <h1 style="color: white;"><i class="fas fa-user-shield"></i> PANEL ADMIN</h1>
+        </a>
+    </header>
+
+    <div class="content-page" style="padding-top: 20px;">
+        <h2 style="text-align: center;"><i class="fas fa-user-md"></i> Gestión y Registro de Doctores</h2>
+        <p style="text-align: center; color: #6c757d; margin-bottom: 30px;">
+            Añade, edita o elimina la lista de doctores disponibles para agendar citas.
+        </p>
+
+        <div class="doctor-grid">
+            
+            <div class="form-section-doctor">
+                <h3 id="doctor-form-title"><i class="fas fa-plus"></i> Registrar Nuevo Doctor</h3>
+                <form id="doctorForm">
+                    <input type="hidden" id="doctorId">
+                    
+                    <div class="form-group">
+                        <label for="nombre">Nombre Completo:</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="especialidad">Especialidad:</label>
+                        <input type="text" id="especialidad" name="especialidad" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefono">Teléfono/Contacto:</label>
+                        <input type="text" id="telefono" name="telefono">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email">
+                    </div>
+                    
+                    <button type="submit" class="btn-form-submit" id="saveDoctorButton" style="background-color: black; margin-top: 15px;">
+                        <i class="fas fa-save"></i> Guardar Doctor
+                    </button>
+                    <button type="button" class="btn-form-submit" id="cancelDoctorButton" style="background-color: #6c757d; margin-top: 15px; display: none;" onclick="resetDoctorForm()">
+                        <i class="fas fa-times"></i> Cancelar Edición
+                    </button>
+                </form>
+            </div>
+
+            <div class="doctor-list-section">
+                <h3><i class="fas fa-hospital-user"></i> Doctores Activos</h3>
+                <div id="doctorList">
+                    <p style="text-align: center; color: #007bff; font-weight: bold;">Cargando lista de doctores...</p>
+                </div>
+            </div>
+
+        </div>
+
+        <a href="dashboard.html" class="btn-form-submit" style="width: 300px; margin: 40px auto 20px auto; background-color: var(--color-bloque-a);">
+            <i class="fas fa-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+
+    <footer><p>&copy; 2025 Pharma Vitagen.</p></footer>
+
+    <script>
+        const DOCTOR_STORAGE_KEY = 'doctores';
+
+        // ====================================================================
+        // INICIALIZACIÓN Y PRECARGA
+        // ====================================================================
+        function precargarDoctoresIniciales() {
+            const doctoresExistentes = localStorage.getItem(DOCTOR_STORAGE_KEY);
+            
+            if (!doctoresExistentes) {
+                const DOCTORES_INICIALES = [
+                    { id: 1, nombre: 'Dr. Juan Pérez', especialidad: 'Medicina General', telefono: '55-1234-5678', email: 'juan.perez@vitagen.com' },
+                    { id: 2, nombre: 'Dra. Ana García', especialidad: 'Dermatología', telefono: '55-9876-5432', email: 'ana.garcia@vitagen.com' },
+                    { id: 3, nombre: 'Dr. Carlos Ruiz', especialidad: 'Pediatría', telefono: '55-1122-3344', email: 'carlos.ruiz@vitagen.com' }
+                ];
+                
+                localStorage.setItem(DOCTOR_STORAGE_KEY, JSON.stringify(DOCTORES_INICIALES));
+            }
+        }
+
+        // ====================================================================
+        // CARGAR Y MOSTRAR DOCTORES
+        // ====================================================================
+        function cargarDoctores() {
+            const container = document.getElementById('doctorList');
+            let doctores = JSON.parse(localStorage.getItem(DOCTOR_STORAGE_KEY)) || [];
+            
+            if (doctores.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #dc3545; font-weight: bold;">No hay doctores registrados.</p>';
+                return;
+            }
+
+            let listHTML = '';
+            doctores.sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+            doctores.forEach(doctor => {
+                listHTML += `
+                    <div class="doctor-item">
+                        <div class="doctor-info">
+                            <strong>${doctor.nombre}</strong>
+                            <p>Especialidad: <span class="tag-specialty">${doctor.especialidad}</span></p>
+                            <p>Contacto: ${doctor.telefono || 'N/A'} | ${doctor.email || 'N/A'}</p>
+                        </div>
+                        <div class="doctor-actions">
+                            <button class="btn-action" style="background-color: #ffc107; color: black;" onclick="editarDoctor(${doctor.id})">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="btn-action delete" style="background-color: #dc3545; color: white;" onclick="eliminarDoctor(${doctor.id})">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = listHTML;
+        }
+
+        // ====================================================================
+        // MANEJO DEL FORMULARIO (GUARDAR/EDITAR)
+        // ====================================================================
+        document.getElementById('doctorForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const id = document.getElementById('doctorId').value;
+            const nombre = document.getElementById('nombre').value.trim();
+            const especialidad = document.getElementById('especialidad').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            let doctores = JSON.parse(localStorage.getItem(DOCTOR_STORAGE_KEY)) || [];
+
+            if (id) {
+                // Modo Edición
+                doctores = doctores.map(d => {
+                    if (d.id == id) {
+                        return { id: parseInt(id), nombre, especialidad, telefono, email };
+                    }
+                    return d;
+                });
+                alert(`Doctor(a) ${nombre} actualizado con éxito.`);
+            } else {
+                // Modo Nuevo
+                const nuevoDoctor = {
+                    id: Date.now(),
+                    nombre,
+                    especialidad,
+                    telefono,
+                    email
+                };
+                doctores.push(nuevoDoctor);
+                alert(`Doctor(a) ${nombre} registrado con éxito.`);
+            }
+
+            localStorage.setItem(DOCTOR_STORAGE_KEY, JSON.stringify(doctores));
+            resetDoctorForm();
+            cargarDoctores();
+        });
+
+        // ====================================================================
+        // FUNCIONES AUXILIARES (EDITAR, ELIMINAR, RESETEAR)
+        // ====================================================================
+        function editarDoctor(id) {
+            let doctores = JSON.parse(localStorage.getItem(DOCTOR_STORAGE_KEY)) || [];
+            const doctor = doctores.find(d => d.id === id);
+
+            if (doctor) {
+                document.getElementById('doctorId').value = doctor.id;
+                document.getElementById('nombre').value = doctor.nombre;
+                document.getElementById('especialidad').value = doctor.especialidad;
+                document.getElementById('telefono').value = doctor.telefono;
+                document.getElementById('email').value = doctor.email;
+                
+                document.getElementById('doctor-form-title').innerHTML = '<i class="fas fa-edit"></i> Editar Doctor';
+                document.getElementById('saveDoctorButton').innerHTML = '<i class="fas fa-redo"></i> Actualizar Doctor';
+                document.getElementById('saveDoctorButton').style.backgroundColor = '#007bff';
+                document.getElementById('cancelDoctorButton').style.display = 'inline-block';
+            }
+        }
+
+        function eliminarDoctor(id) {
+            if (confirm('¿Estás seguro de eliminar a este doctor? Esta acción no se puede deshacer.')) {
+                let doctores = JSON.parse(localStorage.getItem(DOCTOR_STORAGE_KEY)) || [];
+                const nuevosDoctores = doctores.filter(d => d.id !== id);
+                localStorage.setItem(DOCTOR_STORAGE_KEY, JSON.stringify(nuevosDoctores));
+                cargarDoctores();
+                alert('Doctor eliminado.');
+            }
+        }
+
+        function resetDoctorForm() {
+            document.getElementById('doctorForm').reset();
+            document.getElementById('doctorId').value = '';
+            
+            document.getElementById('doctor-form-title').innerHTML = '<i class="fas fa-plus"></i> Registrar Nuevo Doctor';
+            document.getElementById('saveDoctorButton').innerHTML = '<i class="fas fa-save"></i> Guardar Doctor';
+            document.getElementById('saveDoctorButton').style.backgroundColor = 'black';
+            document.getElementById('cancelDoctorButton').style.display = 'none';
+        }
+
+        // ====================================================================
+        // INICIO DE LA LÓGICA AL CARGAR LA PÁGINA
+        // ====================================================================
+        precargarDoctoresIniciales();
+        cargarDoctores();
+    </script>
+</body>
+</html>

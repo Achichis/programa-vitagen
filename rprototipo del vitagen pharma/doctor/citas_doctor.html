@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citas de Hoy - Dr. Pérez</title>
+    <link rel="stylesheet" href="../styles.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .citas-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .citas-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .citas-table th, .citas-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .citas-table th {
+            background-color: #007bff;
+            color: white;
+        }
+        .status-pendiente { color: #ffc107; font-weight: bold; }
+        .status-confirmada { color: #28a745; font-weight: bold; }
+        .status-cancelada { color: #dc3545; font-weight: bold; }
+        .status-completada { color: #1e3a8a; font-weight: bold; }
+
+        .btn-action-status {
+            padding: 6px 12px;
+            margin-right: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <header style="background-color: #007bff;">
+        <a href="../index.html" class="logo-link">
+             <img src="../src/logo.jpg" alt="Logo Pharma Vitagen" class="logo-img">
+             <h1 style="color: white;"><i class="fas fa-user-md"></i> PANEL MÉDICO</h1>
+        </a>
+    </header>
+
+    <div class="content-page" style="padding-top: 20px;">
+        <h2 style="text-align: center;"><i class="fas fa-calendar-check"></i> Mis Citas Programadas</h2>
+        <p style="text-align: center; color: #6c757d; margin-bottom: 30px;">
+            Agenda de citas programadas (filtrada por el doctor logueado).
+        </p>
+
+        <div class="citas-container">
+            <table class="citas-table">
+                <thead>
+                    <tr>
+                        <th>Hora</th>
+                        <th>Paciente</th>
+                        <th>Motivo</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="citasTableBody">
+                    </tbody>
+            </table>
+        </div>
+
+        <a href="dashboard.html" class="btn-form-submit" style="width: 300px; margin: 40px auto 20px auto; background-color: var(--color-bloque-a);">
+            <i class="fas fa-arrow-left"></i> Volver al Panel
+        </a>
+    </div>
+
+    <footer><p>&copy; 2025 Pharma Vitagen.</p></footer>
+
+    <script>
+        const CITAS_STORAGE_KEY = 'citas_doctor_juan';
+
+        // Función auxiliar para obtener el email del doctor que inició sesión
+        function getCurrentDoctorEmail() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            // Usamos un valor por defecto ('dr.juan.perez@vitagen.com') si el inicio de sesión falla.
+            return currentUser && currentUser.rol === 'doctor' ? currentUser.correo : 'dr.juan.perez@vitagen.com'; 
+        }
+
+        // Inicializa un arreglo de citas si no existe en localStorage
+        function initializeCitas() {
+            if (!localStorage.getItem(CITAS_STORAGE_KEY)) {
+                const initialCitas = [
+                    // Citas del Dr. Juan Pérez (Medicina General)
+                    { id: 1, hora: '10:00 AM', paciente: 'Luis G. Fernández', motivo: 'Chequeo General', estado: 'Confirmada', doctor: 'dr.juan.perez@vitagen.com' },
+                    { id: 2, hora: '11:30 AM', paciente: 'Sofía M. Robles', motivo: 'Control de Dermatitis', estado: 'Pendiente', doctor: 'dr.juan.perez@vitagen.com' },
+                    { id: 4, hora: '03:30 PM', paciente: 'Ana M. Torres', motivo: 'Dolor de espalda', estado: 'Cancelada', doctor: 'dr.juan.perez@vitagen.com' },
+                    
+                    // Citas de OTROS doctores para probar el filtro
+                    { id: 3, hora: '02:00 PM', paciente: 'Javier P. Cruz (niño)', motivo: 'Vacuna de refuerzo', estado: 'Pendiente', doctor: 'dra.ana.lopez@vitagen.com' },
+                    { id: 5, hora: '09:00 AM', paciente: 'Roberto Véliz', motivo: 'Revisión de Marcapasos', estado: 'Confirmada', doctor: 'dr.raul.soto@vitagen.com' },
+                    { id: 6, hora: '04:30 PM', paciente: 'Luisa F. Gámez', motivo: 'Plan de alimentación', estado: 'Pendiente', doctor: 'dra.elena.cruz@vitagen.com' },
+                ];
+                localStorage.setItem(CITAS_STORAGE_KEY, JSON.stringify(initialCitas));
+            }
+        }
+
+        // Carga y renderiza las citas en la tabla (con filtro)
+        function renderCitas() {
+            // 1. FILTRO: Obtener el email del doctor actual para filtrar las citas
+            const currentDoctorEmail = getCurrentDoctorEmail(); 
+            
+            const allCitas = JSON.parse(localStorage.getItem(CITAS_STORAGE_KEY)) || [];
+            const citasFiltered = allCitas.filter(cita => cita.doctor === currentDoctorEmail);
+
+            const tbody = document.getElementById('citasTableBody');
+            tbody.innerHTML = '';
+
+            if (citasFiltered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #1e3a8a; font-weight: bold;">¡Felicidades! No tienes citas programadas para hoy.</td></tr>';
+                return;
+            }
+
+            citasFiltered.forEach(cita => {
+                let statusClass;
+                let actionButtons = '';
+                
+                switch (cita.estado) {
+                    case 'Confirmada':
+                        statusClass = 'status-confirmada';
+                        actionButtons = `
+                            <button class="btn-action-status" style="background-color: #dc3545; color: white;" onclick="changeStatus(${cita.id}, 'Cancelada')">
+                                Cancelar
+                            </button>
+                            <button class="btn-action-status" style="background-color: #1e3a8a; color: white;" onclick="changeStatus(${cita.id}, 'Completada')">
+                                Completar
+                            </button>
+                        `;
+                        break;
+                    case 'Pendiente':
+                        statusClass = 'status-pendiente';
+                        actionButtons = `
+                            <button class="btn-action-status" style="background-color: #28a745; color: white;" onclick="changeStatus(${cita.id}, 'Confirmada')">
+                                Confirmar
+                            </button>
+                            <button class="btn-action-status" style="background-color: #dc3545; color: white;" onclick="changeStatus(${cita.id}, 'Cancelada')">
+                                Rechazar
+                            </button>
+                        `;
+                        break;
+                    case 'Cancelada':
+                        statusClass = 'status-cancelada';
+                        actionButtons = `<span style="color: #6c757d;">--</span>`;
+                        break;
+                    case 'Completada':
+                        statusClass = 'status-completada';
+                        actionButtons = `<span style="color: #6c757d;">Finalizada</span>`;
+                        break;
+                }
+
+                const row = `
+                    <tr>
+                        <td>${cita.hora}</td>
+                        <td>${cita.paciente}</td>
+                        <td>${cita.motivo}</td>
+                        <td class="${statusClass}">${cita.estado}</td>
+                        <td>${actionButtons}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Función para cambiar el estado de la cita
+        function changeStatus(id, newStatus) {
+            let citas = JSON.parse(localStorage.getItem(CITAS_STORAGE_KEY)) || [];
+            
+            const index = citas.findIndex(c => c.id === id);
+            
+            if (index !== -1) {
+                citas[index].estado = newStatus;
+                
+                let message;
+                if (newStatus === 'Confirmada') {
+                    message = `Cita de ${citas[index].paciente} CONFIRMADA.`;
+                } else if (newStatus === 'Cancelada') {
+                    message = `Cita de ${citas[index].paciente} CANCELADA/RECHAZADA.`;
+                } else if (newStatus === 'Completada') {
+                    message = `Cita de ${citas[index].paciente} marcada como COMPLETADA.`;
+                }
+                
+                alert(message);
+
+                localStorage.setItem(CITAS_STORAGE_KEY, JSON.stringify(citas));
+                renderCitas();
+            }
+        }
+
+        // Ejecuta al cargar la página
+        initializeCitas();
+        renderCitas();
+    </script>
+</body>
+</html>

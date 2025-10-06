@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHARMA VITAGEN - Agendar Cita</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header><h1>PHARMA VITAGEN - Agendar Cita</h1></header>
+
+    <div class="content-page">
+        <h2>Paso 1: Busca a tu Especialista</h2>
+        
+        <form id="busquedaForm" onsubmit="buscarDisponibilidad(event)">
+
+            <div class="form-group">
+                <label for="especialidad">Especialidad:</label>
+                <select id="especialidad" name="especialidad" required>
+                    <option value="">Seleccionar Especialidad...</option>
+                    <option value="Medicina General">Medicina General</option>
+                    <option value="Cardiología">Cardiología</option>
+                    <option value="Pediatría">Pediatría</option>
+                    <option value="Dermatología">Dermatología</option>
+                    <option value="Oftalmología">Oftalmología</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="doctor">Doctor(a) (opcional):</label>
+                <input type="text" id="doctor" name="doctor" placeholder="Dr. Juan Pérez o parte del nombre">
+            </div>
+
+            <div class="form-group">
+                <label for="ubicacion">Ubicación (opcional):</label>
+                <input type="text" id="ubicacion" name="ubicacion" placeholder="Guadalajara o nombre de la clínica">
+            </div>
+
+            <button type="submit" class="btn-form-submit" style="background-color: var(--color-secundario);">
+                <i class="fas fa-search"></i> Buscar Disponibilidad
+            </button>
+        </form>
+        
+        <div id="resultados-disponibilidad" style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 25px; min-height: 100px;">
+            <p style="text-align: center; color: #888;">Ingresa los filtros y haz clic en Buscar Disponibilidad para ver los horarios.</p>
+        </div>
+
+        <p style="margin-top: 30px;"><a href="index.html">Volver al Inicio</a></p>
+    </div>
+
+    <footer><p>&copy; 2025 Pharma Vitagen.</p></footer>
+
+    <div class="chatbot-bubble" id="chatbot-bubble">
+        <i class="fas fa-comment-alt"></i>
+    </div>
+    <div class="chatbot-window" id="chatbot-window">
+        <div class="chatbot-header">Asistente Virtual</div>
+        <div class="chatbot-messages" id="chatbot-messages">
+            <div class="message bot-message">¡Hola! 👋 Soy tu asistente virtual. Pregunta por "cita", "farmacia" o "ayuda".</div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="chatbot-input-text" placeholder="Escribe tu mensaje...">
+            <button id="chatbot-send"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script src="chatbot.js"></script>
+    
+    <script>
+        // LISTA DE DOCTORES ACTUALIZADA PARA PERMITIR BÚSQUEDAS FLEXIBLES POR UBICACIÓN
+        const DOCTORES_DISPONIBLES = [
+            // Cardiología
+            { nombre: "Dra. Elena García", especialidad: "Cardiología", ubicacion: "Consultorio Privado - Zona Centro, Guadalajara" },
+            { nombre: "Dr. Carlos Ruiz", especialidad: "Cardiología", ubicacion: "Torre Médica Puerta de Hierro, Zapopan" },
+            { nombre: "Dr. Raúl Soto", especialidad: "Cardiología", ubicacion: "Sede Norte, Guadalajara" },
+
+            // Pediatría
+            { nombre: "Dr. Ricardo Solís", especialidad: "Pediatría", ubicacion: "Hospital Metropolitano, Guadalajara" },
+            { nombre: "Dra. Ana López", especialidad: "Pediatría", ubicacion: "Hospital Materno Infantil, Tlaquepaque" },
+
+            // Medicina General
+            { nombre: "Dr. Luis Torres", especialidad: "Medicina General", ubicacion: "Clínica 25, Guadalajara" },
+            { nombre: "Dr. Miguel Castro", especialidad: "Medicina General", ubicacion: "Consultorio de la Colonia" },
+            { nombre: "Dra. Laura Pérez", especialidad: "Medicina General", ubicacion: "Clinica Familiar 'El Faro'" },
+
+            // Otros
+            { nombre: "Dr. Carlos Díaz", especialidad: "Dermatología", ubicacion: "Torre Médica Elite" },
+            { nombre: "Dra. Sofía Rueda", especialidad: "Oftalmología", ubicacion: "Hospital de la Ciudad" },
+        ];
+        
+        // Horarios simulados para la demostración
+        const HORARIOS = ["10:00 AM", "10:30 AM", "11:30 AM", "2:00 PM", "3:30 PM"];
+
+        function buscarDisponibilidad(event) {
+            event.preventDefault(); 
+            
+            const especialidad = document.getElementById('especialidad').value;
+            const doctorFiltro = document.getElementById('doctor').value.trim().toLowerCase();
+            const ubicacionFiltro = document.getElementById('ubicacion').value.trim().toLowerCase();
+            
+            const resultadosDiv = document.getElementById('resultados-disponibilidad');
+
+            if (!especialidad) {
+                resultadosDiv.innerHTML = '<p style="color: red; text-align: center;">Por favor, selecciona una Especialidad.</p>';
+                return;
+            }
+            
+            // Lógica de Filtro Flexible
+            const doctoresEncontrados = DOCTORES_DISPONIBLES.filter(doctor => {
+                let coincideEspecialidad = doctor.especialidad === especialidad;
+
+                // Solo filtra por nombre si se ingresó un valor
+                let coincideDoctor = true;
+                if (doctorFiltro) {
+                    coincideDoctor = doctor.nombre.toLowerCase().includes(doctorFiltro);
+                }
+
+                // Solo filtra por ubicación si se ingresó un valor
+                let coincideUbicacion = true;
+                if (ubicacionFiltro) {
+                    coincideUbicacion = doctor.ubicacion.toLowerCase().includes(ubicacionFiltro);
+                }
+
+                // Devuelve true solo si coincide la especialidad Y (opcionalmente) el doctor Y (opcionalmente) la ubicación
+                return coincideEspecialidad && coincideDoctor && coincideUbicacion;
+            });
+
+            let htmlResultado = '';
+
+            if (doctoresEncontrados.length > 0) {
+                htmlResultado += `<h3 style="color: var(--color-principal); margin-bottom: 20px;">
+                                     <i class="fas fa-user-md"></i> ${doctoresEncontrados.length} Especialista(s) disponible(s)
+                                 </h3>`;
+                
+                doctoresEncontrados.forEach(doctor => {
+                    htmlResultado += `
+                        <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
+                            <h4 style="color: var(--color-bloque-a);">${doctor.nombre} (${doctor.especialidad})</h4>
+                            <p style="color: #6c757d; margin-bottom: 10px;"><i class="fas fa-map-marker-alt"></i> ${doctor.ubicacion}</p>
+                            <p style="font-weight: bold; margin-bottom: 10px;">Horarios Disponibles Hoy:</p>
+                            <div class="disponibilidad-horarios" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                ${HORARIOS.map(hora => `
+                                    <button class="btn-hora" onclick="seleccionarCita('${doctor.nombre}', '${hora}', '${doctor.especialidad}')"
+                                        style="background-color: var(--color-secundario); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">
+                                        ${hora}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+
+            } else {
+                htmlResultado = `
+                    <h3 style="color: #dc3545;"><i class="fas fa-calendar-times"></i> Sin Resultados</h3>
+                    <p>No se encontró disponibilidad para la especialidad **${especialidad}** con los filtros ingresados.</p>
+                `;
+            }
+
+            resultadosDiv.innerHTML = htmlResultado;
+        }
+
+        function seleccionarCita(doctor, hora, especialidad) {
+            const currentUserData = localStorage.getItem('currentUser');
+
+            if (!currentUserData) {
+                // Se corrigió la ruta para asegurar que suba un nivel si estás en la raíz (asumiendo que login.html está en la raíz)
+                if (confirm('Debes iniciar sesión para agendar una cita. ¿Quieres ir al portal de inicio de sesión ahora?')) {
+                    window.location.href = 'login.html'; 
+                }
+                return;
+            }
+            
+            const user = JSON.parse(currentUserData);
+            
+            const nuevaCita = {
+                doctor: doctor,
+                hora: hora,
+                fecha: "2025-11-10", 
+                especialidad: especialidad
+            };
+            
+            user.proximaCita = nuevaCita;
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            
+            if (user.rol === 'paciente') {
+                let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+                const index = usuarios.findIndex(u => u.correo === user.correo);
+                if (index !== -1) {
+                    usuarios[index] = user; 
+                    localStorage.setItem('usuarios', JSON.stringify(usuarios));
+                }
+            }
+
+            alert(`¡Cita agendada con ${doctor} a las ${hora}!\nSerás redirigido a tu portal.`);
+            
+            // Redirigir al dashboard (Asegúrate que la ruta sea correcta, ej: 'paciente/dashboard.html')
+            window.location.href = `${user.rol}/dashboard.html`;
+        }
+    </script>
+</body>
+</html>

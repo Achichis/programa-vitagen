@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra y Pago - Pharma Vitagen</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Estilos CSS específicos para el formulario de Checkout */
+        .checkout-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .checkout-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .checkout-section h3 {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            display: inline-block;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        .form-row > div {
+            flex: 1;
+        }
+        .resumen-cobro {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+        .resumen-cobro div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .resumen-cobro .total {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ff69b4; 
+            border-top: 2px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        .btn-pagar {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin-top: 25px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn-pagar:hover {
+            background-color: #0056b3;
+        }
+        .payment-option {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo-link">
+            <img src="src/logo.jpg" alt="Logo Pharma Vitagen" class="logo-img"> 
+            <h1>PHARMA VITAGEN</h1>
+        </a>
+        <nav class="nav-links">
+            <a href="agendar_cita.html">📅 Agendar Cita</a>
+            <a href="ayuda.html">Ayuda</a>
+            <a href="login.html" id="btn-login-nav">🔑 Inicio de Sesión</a>
+            <a href="carrito.html" class="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count" id="cart-count-header">0</span>
+            </a>
+        </nav>
+    </header>
+
+    <div class="content-page checkout-container">
+        <h2>🔒 Finalizar Compra y Pago Seguro</h2>
+        
+        <form id="checkout-form">
+            
+            <div class="checkout-section">
+                <h3>Resumen de la Orden</h3>
+                <div class="resumen-cobro">
+                    <div>
+                        <span>Subtotal de Productos:</span>
+                        <span id="checkout-subtotal">$0.00</span>
+                    </div>
+                    <div>
+                        <span>Costo de Envío:</span>
+                        <span id="checkout-envio">$5.00</span>
+                    </div>
+                    <div class="total">
+                        <span>TOTAL A PAGAR:</span>
+                        <span id="checkout-total">$0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="checkout-section">
+                <h3>1. Dirección de Envío</h3>
+                <div class="form-group">
+                    <input type="text" id="nombre-completo" placeholder="Nombre Completo" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email-confirmacion" placeholder="Correo Electrónico de Confirmación" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="calle-numero" placeholder="Calle y Número" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="colonia-barrio" placeholder="Colonia/Barrio" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="text" id="ciudad-estado" placeholder="Ciudad y Estado" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="codigo-postal" placeholder="Código Postal" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="checkout-section">
+                <h3>2. Método de Pago</h3>
+                
+                <div class="payment-option">
+                    <label>
+                        <input type="radio" name="metodo-pago" value="tarjeta" checked onchange="togglePaymentFields()"> Tarjeta de Crédito/Débito
+                    </label>
+                </div>
+                <div class="payment-option">
+                    <label>
+                        <input type="radio" name="metodo-pago" value="efectivo" onchange="togglePaymentFields()"> Pago en Efectivo (Contra Entrega)
+                    </label>
+                </div>
+                
+                <div id="tarjeta-fields">
+                    <div class="form-group">
+                        <input type="text" id="numero-tarjeta" placeholder="Número de Tarjeta" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="nombre-tarjeta" placeholder="Nombre en la Tarjeta" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="mm-aa" placeholder="MM/AA" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="cvv" placeholder="CVV" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-pagar">Pagar Ahora</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Pharma Vitagen. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        const CARRITO_STORAGE_KEY = 'carritoItems';
+        const COSTO_ENVIO = 5.00;
+        //para cargar el resumen del cobro
+        function cargarResumenCobro() {
+            const carrito = JSON.parse(localStorage.getItem(CARRITO_STORAGE_KEY)) || [];
+            let subtotalGlobal = 0;
+            let totalProductosUnicos = carrito.length;
+
+            carrito.forEach(item => {
+                subtotalGlobal += item.precio * item.cantidad;
+            });
+            
+            // lo puse por si el subtotal es 0, el envío también es 0
+            const costoEnvio = subtotalGlobal > 0 ? COSTO_ENVIO : 0;
+            const totalPagar = subtotalGlobal + costoEnvio;
+
+            // Actualizar el DOM
+            document.getElementById('checkout-subtotal').textContent = `$${subtotalGlobal.toFixed(2)}`;
+            document.getElementById('checkout-envio').textContent = `$${costoEnvio.toFixed(2)}`;
+            document.getElementById('checkout-total').textContent = `$${totalPagar.toFixed(2)}`;
+            
+            document.getElementById('cart-count-header').textContent = totalProductosUnicos;
+
+            return totalPagar; 
+        }
+
+       //para mostrar/ocultar campos de tarjeta según método de pago
+        function togglePaymentFields() {
+            const selectedMethod = document.querySelector('input[name="metodo-pago"]:checked').value;
+            const tarjetaFields = document.getElementById('tarjeta-fields');
+            
+            if (selectedMethod === 'tarjeta') {
+                // Mostrar campos de tarjeta y hacerlos requeridos
+                tarjetaFields.style.display = 'block';
+                tarjetaFields.querySelectorAll('input').forEach(input => input.required = true);
+            } else {
+                // Ocultar campos de tarjeta y quitar el requerimiento
+                tarjetaFields.style.display = 'none';
+                tarjetaFields.querySelectorAll('input').forEach(input => input.required = false);
+            }
+        }
+
+
+       //proceso de pago simulado
+        document.getElementById('checkout-form').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+
+            const total = cargarResumenCobro();
+            const metodoPago = document.querySelector('input[name="metodo-pago"]:checked').value;
+            const emailConfirmacion = document.getElementById('email-confirmacion').value;
+
+            // la validación de carrito vacío
+            if (total === 0) {
+                alert("🛒 ¡Tu carrito está vacío! No hay nada que pagar.");
+                window.location.href = 'farmacia.html';
+                return;
+            }
+
+            // para Simulación de confirmación de pago/orden
+            let mensaje;
+            if (metodoPago === 'tarjeta') {
+                mensaje = `✅ ¡Pago de $${total.toFixed(2)} con tarjeta PROCESADO! \n\nSe ha enviado la confirmación de tu compra al correo:\n${emailConfirmacion}\n\nGracias por tu compra en Pharma Vitagen.`;
+            } else {
+                mensaje = `✅ ¡Orden generada! \n\nEl pago de $${total.toFixed(2)} se realizará en efectivo contra entrega.\n\nSe ha enviado la confirmación de la orden al correo:\n${emailConfirmacion}\n\nGracias por tu compra en Pharma Vitagen.`;
+            }
+
+            alert(mensaje);
+
+            // esto pa Limpiar el carrito y redirigir
+            localStorage.removeItem(CARRITO_STORAGE_KEY);
+
+            window.location.href = 'index.html';
+        });
+        
+        // Ejecución al cargar la página
+        cargarResumenCobro();
+        togglePaymentFields(); 
+    </script>
+</body>
+</html>

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmacia - Productos Esenciales - Pharma Vitagen</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        
+        
+
+        :root {
+            --color-principal: #007bff; 
+        }
+        
+        /* Estilos de la cuadrícula de productos */
+        .productos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            padding: 20px;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+        
+        /* Estilos base para la tarjeta individual de producto */
+        .producto-card {
+            border: 1px solid #eee;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        .producto-card img {
+            max-width: 80%;
+            height: auto;
+            margin-bottom: 15px;
+            max-height: 150px; /* Consistencia en la altura de las imágenes */
+            object-fit: contain;
+        }
+        .precio {
+            font-size: 1.5em;
+            color: var(--color-principal); 
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        /* Estilos generales para los botones de comprar/ver */
+        .btn-comprar {
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+            display: block;
+            text-decoration: none; 
+            width: 100%;
+            box-sizing: border-box;
+            font-weight: bold;
+        }
+        
+        /* Estilos específicos de los botones */
+        .btn-ver-producto {
+            background-color: #ff69b4; /* Rosa original */
+            margin-top: 5px;
+        }
+        .btn-añadir-carrito {
+            background-color: #007bff; /* Azul para "Añadir al Carrito" */
+            margin-bottom: 5px;
+        }
+
+        /* CHATBOT STYLES */
+        
+        /* Burbuja flotante para abrir el chatbot */
+        .chatbot-bubble {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #17a2b8;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-size: 28px;
+            z-index: 99999;
+            transition: transform 0.2s;
+        }
+        
+        /* Ventana del chatbot (inicialmente oculta) */
+        .chatbot-window {
+            position: fixed;
+            bottom: 90px;
+            right: 25px;
+            width: 300px;
+            max-height: 400px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden; 
+            transform: scale(0.1); 
+            transform-origin: bottom right; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efecto de apertura elástico */
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 99998;
+        }
+        
+        /* Clase de activación manejada por JavaScript para mostrar la ventana */
+        .chatbot-window.open {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+        
+        /* Estilos de la cabecera y cuerpo de la ventana del chatbot */
+        .chatbot-header {
+            background: #17a2b8;
+            color: white;
+            padding: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .chatbot-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Estilos del área de entrada de texto */
+        .chatbot-input {
+            display: flex;
+            border-top: 1px solid #ddd;
+        }
+        .chatbot-input input {
+            flex: 1;
+            border: none;
+            padding: 10px;
+            font-size: 14px;
+            outline: none;
+        }
+        .chatbot-input button {
+            background: #17a2b8;
+            border: none;
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .chatbot-input button:hover {
+             background-color: #107e91;
+        }
+        
+        /* Estilos de los mensajes individuales */
+        .message {
+            margin: 5px 0;
+            padding: 8px 12px;
+            border-radius: 12px;
+            max-width: 85%;
+        }
+        .user-message {
+            background: #17a2b8;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 2px;
+        }
+        .bot-message {
+            background: #f1f1f1;
+            color: #333;
+            margin-right: auto;
+            border-bottom-left-radius: 2px;
+        }
+        
+        /* Estilo para el botón de WhatsApp dentro del chat (para respuestas del bot) */
+        .btn-whatsapp-chat {
+            display: block; 
+            padding: 8px 10px;
+            margin-top: 10px;
+            text-align: center;
+            background-color: #25D366; 
+            color: white !important;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: background-color 0.3s;
+            font-size: 13px;
+        }
+        .btn-whatsapp-chat:hover {
+            background-color: #128C7E;
+        }
+        .btn-whatsapp-chat i {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo-link">
+            <img src="src/logo.jpg" alt="Logo Pharma Vitagen" class="logo-img"> 
+            <h1>PHARMA VITAGEN</h1>
+        </a>
+        <nav class="nav-links">
+            <a href="agendar_cita.html">Agendar Cita</a>
+            <a href="ayuda.html">Ayuda</a>
+            <a href="login.html" id="btn-login-nav">Inicio de Sesión</a>
+            <a href="carrito.html" class="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count" id="cart-count-header">0</span> 
+            </a>
+        </nav>
+    </header>
+
+    <div class="content-page productos-destacados">
+        <h2 style="text-align: center;">Farmacia y Productos Esenciales</h2>
+        <p style="text-align: center; margin-bottom: 40px;">Encuentra tus medicamentos de venta libre y vitaminas esenciales, con envío rápido.</p>
+
+        <div class="productos-grid" id="productos-farmacia-container">
+            <p style="grid-column: 1 / -1; text-align: center; color: #007bff;">Cargando inventario...</p>
+        </div>
+        
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Pharma Vitagen. Todos los derechos reservados.</p>
+    </footer>
+
+    <div class="chatbot-bubble" id="chatbot-bubble">
+        <i class="fas fa-comment-alt"></i>
+    </div>
+    <div class="chatbot-window" id="chatbot-window">
+        <div class="chatbot-header">Asistente Virtual</div>
+        <div class="chatbot-messages" id="chatbot-messages">
+            <div class="message bot-message">¡Hola! Soy tu asistente virtual. Pregunta por "cita", "farmacia" o "ayuda".</div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="chatbot-input-text" placeholder="Escribe tu mensaje...">
+            <button id="chatbot-send"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+    
+    <script>
+        const PRODUCT_STORAGE_KEY = 'inventario';
+        const CARRITO_STORAGE_KEY = 'carritoItems'; // Clave para guardar los productos del carrito
+        
+        // Mapeo de nombres de productos a sus URLs de imagen
+        const IMAGE_MAP = {
+            'Paracetamol 500mg (20 Tab)': 'src/paracetamol.jpg',
+            'Ibuprofeno 400mg (20 Tab)': 'src/ibuprofeno.jpg',
+            'Omeprazol 20mg (14 Cápsulas)': 'src/omeprazol.jpg',
+            'Neurobión B12 Forte': 'src/Dolo-Neurobion.jpg',
+            'Pepto Bismol (Tabletas)': 'src/pepto-bismol.jpg',
+            'Salbutamol (Inhalador)': 'src/Salbutamol.jpg',
+            'Treda (Antidiarreico)': 'src/Treda.jpg',
+            'Metoprolol 50mg (30 Tab)': 'src/metroprolol.jpg',
+            'Agrifen (Antigripal)': 'src/agrifen.jpg',
+            'MEMBITROL (TINIDAZOL 1 GR) (antibacteriano)': 'src/membitrol.jpg',
+            'ceftriazona (antibiotico)': 'src/ceftriazona.jpg'
+        };
+
+//función para inicializar el inventario con datos de prueba
+        function inicializarInventarioDePrueba() {
+            // Datos de los productos de prueba
+            const inventarioDePrueba = [
+                { id: 1, nombre: 'Paracetamol 500mg (20 Tab)', precio: 25.50, existencia: 150 },
+                { id: 2, nombre: 'Ibuprofeno 400mg (20 Tab)', precio: 38.00, existencia: 90 },
+                { id: 3, nombre: 'Omeprazol 20mg (14 Cápsulas)', precio: 75.99, existencia: 50 },
+                { id: 4, nombre: 'Neurobión B12 Forte', precio: 120.00, existencia: 75 },
+                { id: 5, nombre: 'Pepto Bismol (Tabletas)', precio: 95.00, existencia: 100 },
+                { id: 6, nombre: 'Salbutamol (Inhalador)', precio: 32.00, existencia: 80 },
+                { id: 7, nombre: 'Treda (Antidiarreico)', precio: 45.50, existencia: 60 },
+                { id: 8, nombre: 'Metoprolol 50mg (30 Tab)', precio: 65.00, existencia: 45 },
+                { id: 9, nombre: 'Agrifen (Antigripal)', precio: 22.00, existencia: 110 },
+                { id: 10, nombre: 'MEMBITROL (TINIDAZOL 1 GR) (antibacteriano)', precio: 28.50, existencia: 50 },
+                { id: 11, nombre: 'ceftriazona (antibiotico)', precio: 150.00, existencia: 30 }
+            ];
+            
+            // recuerda aqui Guarda la lista completa en localStorage
+            localStorage.setItem(PRODUCT_STORAGE_KEY, JSON.stringify(inventarioDePrueba));
+        }
+      //actualiza el contador del carrito en el encabezado
+        function actualizarContadorCarrito() {
+            const carrito = JSON.parse(localStorage.getItem(CARRITO_STORAGE_KEY)) || [];
+            const countSpan = document.getElementById('cart-count-header');
+            
+            if (countSpan) {
+                // Muestra el número de ítems únicos en el carrito
+                countSpan.textContent = carrito.length;
+            }
+        }
+
+
+      //función para cargar los productos de la farmacia
+        function cargarProductosFarmacia() {
+            const container = document.getElementById('productos-farmacia-container');
+            const productos = JSON.parse(localStorage.getItem(PRODUCT_STORAGE_KEY)) || [];
+            
+            if (productos.length === 0) {
+                // Mensaje si no hay productos
+                container.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; font-size: 1.2em; color: #6c757d;">Actualmente no hay productos disponibles en la farmacia.</p>';
+                return;
+            }
+
+            let productsHTML = '';
+
+            // Itera sobre el inventario y crea el HTML para cada tarjeta
+            productos.forEach(product => {
+                const imageUrl = IMAGE_MAP[product.nombre] || 'https://via.placeholder.com/150x150?text=Producto+Nuevo'; 
+                
+                const genericDescription = product.existencia > 0 
+                    ? "Producto disponible en stock." 
+                    : "¡Temporalmente agotado!";
+
+                productsHTML += `
+                    <div class="producto-card">
+                        <img src="${imageUrl}" alt="Imagen de ${product.nombre}" class="producto-img">
+                        
+                        <h4>${product.nombre}</h4>
+                        <p>${genericDescription}</p>
+                        
+                        <div class="precio">$${product.precio.toFixed(2)}</div>
+                        
+                        <a href="#" class="btn-comprar btn-añadir-carrito" onclick="añadirAlCarrito('${product.nombre}', ${product.precio}, event)">Añadir al Carrito</a>
+                        <a href="#" class="btn-comprar btn-ver-producto" onclick="verDetalle('${product.nombre}', event)">Ver Producto</a>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = productsHTML;
+        }
+
+        
+  // se le declara al bto
+        window.añadirAlCarrito = function(nombreProducto, precioProducto, event) {
+            // Evita que el enlace recargue la página si es llamado desde un click
+            if (event) {
+                event.preventDefault(); 
+            }
+            
+            let carrito = JSON.parse(localStorage.getItem(CARRITO_STORAGE_KEY)) || [];
+            const itemExistente = carrito.find(item => item.nombre === nombreProducto);
+
+            // Si el producto ya está en el carrito, incrementa la cantidad
+            if (itemExistente) {
+                itemExistente.cantidad += 1;
+            } else {
+                // Si es un producto nuevo, lo añade
+                carrito.push({
+                    nombre: nombreProducto,
+                    precio: precioProducto,
+                    cantidad: 1,
+                    // Añadimos el ID para la gestión futura
+                    id: carrito.length + 1 
+                });
+            }
+
+            localStorage.setItem(CARRITO_STORAGE_KEY, JSON.stringify(carrito));
+            
+            alert(`✅ ¡${nombreProducto} añadido al carrito!`);
+            
+            // LLAMADA CLAVE: Actualiza el número en el encabezado inmediatamente.
+            actualizarContadorCarrito(); 
+        }
+
+        //esta función se encarga de redirigir a la página de detalle del producto
+        function verDetalle(nombreProducto, event) {
+            event.preventDefault(); 
+            // Codifica el nombre para pasarlo en la URL (query parameter)
+            const productoCodificado = encodeURIComponent(nombreProducto);
+            window.location.href = `detalle_producto.html?producto=${productoCodificado}`;
+        }
+
+      //función para inicializar el inventario y cargar productos al iniciar la página
+        inicializarInventarioDePrueba(); // Asegura el inventario completo
+        cargarProductosFarmacia();       // Carga la lista de productos
+        actualizarContadorCarrito();     // Muestra el número correcto de ítems en el encabezado
+    </script>
+    
+    <script>
+        
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // DOM Elements
+            const bubble = document.getElementById('chatbot-bubble');
+            const windowElement = document.getElementById('chatbot-window');
+            const messagesContainer = document.getElementById('chatbot-messages');
+            const sendBtn = document.getElementById('chatbot-send');
+            const input = document.getElementById('chatbot-input-text');
+
+            // Inventario (copia simple para el chatbot)
+            const INVENTARIO_SIMPLE = [
+                { nombre: 'Paracetamol 500mg (20 Tab)', precio: 25.50, link: 'farmacia.html' },
+                { nombre: 'Ibuprofeno 400mg (20 Tab)', precio: 38.00, link: 'farmacia.html' },
+                { nombre: 'Omeprazol 20mg (14 Cápsulas)', precio: 75.99, link: 'farmacia.html' },
+                { nombre: 'Neurobión B12 Forte', precio: 120.00, link: 'farmacia.html' },
+                { nombre: 'Pepto Bismol (Tabletas)', precio: 95.00, link: 'farmacia.html' },
+                { nombre: 'Agrifen (Antigripal)', precio: 22.00, link: 'farmacia.html' }
+            ];
+            
+            // mi numero para el watssap
+            const TELEFONO_CLINICA = '523345883001'; 
+
+
+            // Evento para abrir/cerrar la ventana del chatbot
+            if (bubble && windowElement) {
+                bubble.addEventListener('click', () => {
+                    windowElement.classList.toggle('open'); 
+                    if (windowElement.classList.contains('open') && input) {
+                        input.focus(); // Enfoca el input al abrir
+                    }
+                });
+            }
+
+            // Eventos para enviar mensaje (clic en botón y tecla Enter)
+            if (sendBtn && input && messagesContainer) {
+                sendBtn.addEventListener("click", () => { 
+                    const text = input.value.trim();
+                    if (text !== "") {
+                        addMessage(text, "user");
+                        input.value = "";
+                        botReply(text); // Genera la respuesta del bot
+                    }
+                });
+
+                input.addEventListener("keypress", (e) => {
+                    if (e.key === "Enter") {
+                        sendBtn.click();
+                    }
+                });
+            }
+
+        
+            
+            // Crea el enlace de WhatsApp 
+            function generarEnlaceWhatsApp(motivo) {
+                const mensajeBase = `¡Hola! Necesito ayuda con el siguiente tema: ${motivo}. Vengo del chatbot de Pharma Vitagen.`;
+                const mensajeCodificado = encodeURIComponent(mensajeBase);
+                return `https://wa.me/${TELEFONO_CLINICA}?text=${mensajeCodificado}`;
+            }
+
+            // para añadir mensajes al contenedor
+            function addMessage(text, sender, isHtml = false) {
+                if (!messagesContainer) return; 
+
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', `${sender}-message`);
+                
+                if (isHtml) {
+                    messageDiv.innerHTML = text; // Permite HTML en el mensaje
+                } else {
+                    messageDiv.textContent = text;
+                }
+                
+                messagesContainer.appendChild(messageDiv);
+                
+                // Auto-scroll al último mensaje
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            // Lógica para generar la respuesta del bot
+            function botReply(userText) {
+                const lowerText = userText.toLowerCase();
+                let reply = "";
+                let replyIsHtml = false;
+                
+                // CSS class para los botones/links en las respuestas
+                const btnClass = 'class="btn-whatsapp-chat"'; 
+
+                // Lógica de Respuesta
+                if (lowerText.includes("cita") || lowerText.includes("agendar") || lowerText.includes("reagendar") || lowerText.includes("cancelar")) {
+                    const whatsappLink = generarEnlaceWhatsApp("Reagendar, agendar o consultar sobre una cita"); 
+                    reply = `
+                        Si deseas <strong>agendar, reagendar o cancelar</strong> una cita, haz clic en el botón para contactar a un asistente de manera rápida:
+                        <br>
+                        <a href="${whatsappLink}" target="_blank" ${btnClass}>
+                            <i class="fab fa-whatsapp"></i> Hablar con un Asistente
+                        </a>
+                    `;
+                    replyIsHtml = true;
+                } else if (lowerText.includes("farmacia") || lowerText.includes("productos")) {
+                    reply = `Aquí puedes ver nuestro catálogo completo: <a href="farmacia.html" ${btnClass}><i class="fas fa-pills"></i> Ir a Farmacia</a>`;
+                    replyIsHtml = true;
+                } else if (lowerText.includes("fiebre") || lowerText.includes("dolor") || lowerText.includes("cabeza")) {
+                    const prod = INVENTARIO_SIMPLE.find(p => p.nombre.includes('Paracetamol'));
+                    reply = `Para esos síntomas, recomendamos <strong>${prod.nombre}</strong> ($${prod.precio.toFixed(2)}). <a href="${prod.link}" ${btnClass}><i class="fas fa-shopping-cart"></i> Ver Producto</a>`;
+                    replyIsHtml = true;
+                } else if (lowerText.includes("gripa") || lowerText.includes("resfriado")) {
+                    const prod = INVENTARIO_SIMPLE.find(p => p.nombre.includes('Agrifen'));
+                    reply = `Prueba <strong>${prod.nombre}</strong> ($${prod.precio.toFixed(2)}). <a href="${prod.link}" ${btnClass}><i class="fas fa-shopping-cart"></i> Ver Producto</a>`;
+                    replyIsHtml = true;
+                } else if (lowerText.includes("hola") || lowerText.includes("ola") || lowerText.includes("ayuda")) {
+                    reply = '¡Hola! Soy tu asistente. ¿Cómo puedo ayudarte? Pregunta por "cita", "farmacia" o por algún síntoma como "dolor de cabeza".';
+                } else if (lowerText.includes("consulta rapida")) {
+                     reply = "ADVERTENCIA: esto solo es una recomendacion y no debe tomarse como una consulta medica. esto es solamente para dar una idea de que medicamentos puedes tomar ante sintomas simples, si los problemas persisten consulta a tu medico.";
+                } else if (lowerText.includes("doctores")) {
+                     reply = "Revisa nuestro catálogo de doctores para que puedas encontrar uno que se adecua a tus necesidades.";
+                } else {
+                    reply = "Lo siento, no entendí tu consulta. Pregunta por 'cita', 'farmacia' o 'ayuda'.";
+                }
+
+                // Simulación de delay de escritura del bot
+                setTimeout(() => {
+                    addMessage(reply, "bot", replyIsHtml);
+                }, 800);
+            }
+        });
+        
+    </script>
+</body>
+</html>

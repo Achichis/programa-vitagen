@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Doctor - Dr. Pérez</title>
+    <link rel="stylesheet" href="../styles.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        .doctor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+        .doctor-card {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-top: 5px solid #007bff;
+        }
+        .doctor-card i {
+            font-size: 2.5em;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+        .title-doctor {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+
+        /* ESTILOS DEL CHATBOT (Copiados para asegurar funcionalidad) */
+        .chatbot-bubble {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #17a2b8;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-size: 28px;
+            z-index: 99999;
+            transition: transform 0.2s;
+        }
+        .chatbot-window {
+            position: fixed;
+            bottom: 90px;
+            right: 25px;
+            width: 300px;
+            max-height: 400px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden; 
+            transform: scale(0.1); 
+            transform-origin: bottom right; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 99998;
+        }
+        .chatbot-window.open {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+        .chatbot-header {
+            background: #17a2b8;
+            color: white;
+            padding: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .chatbot-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+        }
+        .chatbot-input {
+            display: flex;
+            border-top: 1px solid #ddd;
+        }
+        .chatbot-input input {
+            flex: 1;
+            border: none;
+            padding: 10px;
+            font-size: 14px;
+            outline: none;
+        }
+        .chatbot-input button {
+            background: #17a2b8;
+            border: none;
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .chatbot-input button:hover {
+             background-color: #107e91;
+        }
+        .message {
+            margin: 5px 0;
+            padding: 8px 12px;
+            border-radius: 12px;
+            max-width: 85%;
+        }
+        .user-message {
+            background: #17a2b8;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 2px;
+        }
+        .bot-message {
+            background: #f1f1f1;
+            color: #333;
+            margin-right: auto;
+            border-bottom-left-radius: 2px;
+        }
+        .btn-whatsapp-chat {
+            display: block; 
+            padding: 8px 10px;
+            margin-top: 10px;
+            text-align: center;
+            background-color: #25D366; 
+            color: white !important;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: background-color 0.3s;
+            font-size: 13px;
+        }
+        .btn-whatsapp-chat:hover {
+            background-color: #128C7E;
+        }
+        .btn-whatsapp-chat i {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header style="background-color: #007bff;">
+        <a href="../index.html" class="logo-link">
+             <img src="../src/logo.jpg" alt="Logo Pharma Vitagen" class="logo-img">
+             <h1 style="color: white;"><i class="fas fa-user-md"></i> PANEL MÉDICO</h1>
+        </a>
+        <nav class="nav-links">
+            <a href="../login.html" onclick="localStorage.clear()" style="color: white;">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </a>
+        </nav>
+    </header>
+
+    <div class="content-page" style="padding-top: 40px;">
+        <h2 style="text-align: center;">Bienvenido, Dr. Juan Pérez</h2>
+        <p style="text-align: center; color: #6c757d; margin-bottom: 30px;">
+            Gestión de tus citas programadas y perfil de atención.
+        </p>
+
+        <div class="doctor-grid">
+            
+            <div class="doctor-card">
+                <i class="fas fa-calendar-check"></i>
+                <div class="title-doctor">Ver Citas de Hoy</div>
+                <p>Revisa la agenda de pacientes programados para el día.</p>
+                <a href="citas_doctor.html" class="btn-form-submit" style="background-color: #28a745;">
+                    <i class="fas fa-arrow-right"></i> Ir a Citas
+                </a>
+            </div>
+
+            <div class="doctor-card">
+                <i class="fas fa-user-edit"></i>
+                <div class="title-doctor">Actualizar Perfil</div>
+                <p>Modifica tu información de contacto y especialidad.</p>
+                <a href="perfil_doctor.html" class="btn-form-submit" style="background-color: #ffc107; color: black;">
+                    <i class="fas fa-cog"></i> Configurar
+                </a>
+            </div>
+
+            <div class="doctor-card">
+                <i class="fas fa-notes-medical"></i>
+                <div class="title-doctor">Historiales Médicos</div>
+                <p>Accede al historial de tus pacientes para consulta.</p>
+                <a href="historiales_doctor.html" class="btn-form-submit" style="background-color: #dc3545;">
+                    <i class="fas fa-book"></i> Consultar
+                </a>
+            </div>
+
+        </div>
+        
+    </div>
+
+    <footer><p>&copy; 2025 Pharma Vitagen.</p></footer>
+
+    <div class="chatbot-bubble" id="chatbot-bubble">
+        <i class="fas fa-comment-alt"></i>
+    </div>
+    <div class="chatbot-window" id="chatbot-window">
+        <div class="chatbot-header">Asistente Virtual</div>
+        <div class="chatbot-messages" id="chatbot-messages">
+            <div class="message bot-message">¡Hola! Soy tu asistente virtual. Pregunta por "cita", "farmacia" o "ayuda".</div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="chatbot-input-text" placeholder="Escribe tu mensaje...">
+            <button id="chatbot-send"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+    <script>
+        
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // elementos del chatbot
+            const bubble = document.getElementById('chatbot-bubble');
+            const windowElement = document.getElementById('chatbot-window');
+            const messagesContainer = document.getElementById('chatbot-messages');
+            const sendBtn = document.getElementById('chatbot-send');
+            const input = document.getElementById('chatbot-input-text');
+
+            // Inventario (Simulado)
+            const INVENTARIO_SIMPLE = [
+                { nombre: 'Paracetamol 500mg (20 Tab)', precio: 25.50, link: '../farmacia.html' },
+                { nombre: 'Agrifen (Antigripal)', precio: 22.00, link: '../farmacia.html' }
+            ];
+
+            // mi numero para el whats
+            const TELEFONO_CLINICA = '523345883001';
+
+
+            // eventos para el chatbot y sus botones
+            if (bubble && windowElement) {
+                bubble.addEventListener('click', () => {
+                    windowElement.classList.toggle('open'); 
+                    if (windowElement.classList.contains('open') && input) {
+                        input.focus();
+                    }
+                });
+            }
+            if (bubble && windowElement) {
+                bubble.addEventListener('click', () => {
+                    windowElement.classList.toggle('open'); 
+                    if (windowElement.classList.contains('open') && input) {
+                        input.focus();
+                    }
+                });
+            }
+
+            if (sendBtn && input && messagesContainer) {
+                sendBtn.addEventListener("click", () => { 
+                    const text = input.value.trim();
+                    if (text !== "") {
+                        addMessage(text, "user");
+                        input.value = "";
+                        botReply(text);
+                    }
+                });
+
+                input.addEventListener("keypress", (e) => {
+                    if (e.key === "Enter") {
+                        sendBtn.click();
+                    }
+                });
+            }
+
+            // funciones auxiliares
+            
+            function generarEnlaceWhatsApp(motivo) {
+                const mensajeBase = `¡Hola! Necesito ayuda con el siguiente tema: ${motivo}. Vengo del chatbot de Pharma Vitagen.`;
+                const mensajeCodificado = encodeURIComponent(mensajeBase);
+                return `https://wa.me/${TELEFONO_CLINICA}?text=${mensajeCodificado}`;
+            }
+
+            function addMessage(text, sender, isHtml = false) {
+                if (!messagesContainer) return; 
+
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', `${sender}-message`);
+                
+                if (isHtml) {
+                    messageDiv.innerHTML = text;
+                } else {
+                    messageDiv.textContent = text;
+                }
+                
+                messagesContainer.appendChild(messageDiv);
+                
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            // linea añadida para evitar errores si se llama
+            window.añadirAlCarrito = function(nombreProducto, precioProducto) {
+                // En este contexto (Dashboard Médico), no se debería agregar al carrito, 
+                // pero si el usuario presiona el botón, lo redirigimos a la farmacia.
+                alert(`El producto ${nombreProducto} sería añadido al carrito si estuvieras en la sección de Farmacia.`);
+                window.location.href = '../farmacia.html';
+            }
+
+            function botReply(userText) {
+                const lowerText = userText.toLowerCase();
+                let reply = "";
+                let replyIsHtml = false;
+                
+                const btnClass = 'class="btn-whatsapp-chat"'; 
+                // Nuevo CSS para el botón de Añadir al Carrito (simulado aquí)
+                const btnCartClass = 'style="background-color: #007bff; color: white; border: none; padding: 8px 10px; margin-top: 5px; border-radius: 5px; cursor: pointer; display: block; text-align: center; font-size: 13px; font-weight: 700; text-decoration: none;"';
+
+
+                // logica de respuestas
+                if (lowerText.includes("cita") || lowerText.includes("agendar") || lowerText.includes("reagendar") || lowerText.includes("cancelar")) {
+                    const whatsappLink = generarEnlaceWhatsApp("Reagendar, agendar o consultar sobre una cita"); 
+                    reply = `
+                        Si deseas <strong>agendar, reagendar o cancelar</strong> una cita, haz clic en el botón para contactar a un asistente de manera rápida:
+                        <br>
+                        <a href="${whatsappLink}" target="_blank" ${btnClass}>
+                            <i class="fab fa-whatsapp"></i> Hablar con un Asistente
+                        </a>
+                    `;
+                    replyIsHtml = true;
+                } else if (lowerText.includes("farmacia") || lowerText.includes("productos")) {
+                    reply = `Aquí puedes ver nuestro catálogo completo: <a href="../farmacia.html" ${btnClass}><i class="fas fa-pills"></i> Ir a Farmacia</a>`;
+                    replyIsHtml = true;
+                } 
+                
+                // Lógica de producto (simulada)
+                else if (lowerText.includes("fiebre") || lowerText.includes("dolor") || lowerText.includes("cabeza")) {
+                    const prod = INVENTARIO_SIMPLE.find(p => p.nombre.includes('Paracetamol'));
+                    if (prod) {
+                        // el botón de Añadir al Carrito simplemente redirige a la farmacia.
+                        reply = `
+                            Para esos síntomas, recomendamos <strong>${prod.nombre}</strong> ($${prod.precio.toFixed(2)}).
+                            <a href="../farmacia.html" ${btnCartClass}>
+                                <i class="fas fa-cart-plus"></i> Ir a la Farmacia
+                            </a>
+                            <a href="${prod.link}" ${btnClass} style="margin-top: 10px; background-color: #ff69b4;">
+                                <i class="fas fa-info-circle"></i> Ver Detalles
+                            </a>
+                        `;
+                        replyIsHtml = true;
+                    } else {
+                        reply = "No encontramos un producto específico para esos síntomas en nuestro inventario simple.";
+                    }
+                } 
+                
+                else if (lowerText.includes("gripa") || lowerText.includes("resfriado")) {
+                    const prod = INVENTARIO_SIMPLE.find(p => p.nombre.includes('Agrifen'));
+                    if (prod) {
+                        reply = `
+                            Prueba <strong>${prod.nombre}</strong> ($${prod.precio.toFixed(2)}).
+                            <a href="../farmacia.html" ${btnCartClass}>
+                                <i class="fas fa-cart-plus"></i> Ir a la Farmacia
+                            </a>
+                            <a href="${prod.link}" ${btnClass} style="margin-top: 10px; background-color: #ff69b4;">
+                                <i class="fas fa-info-circle"></i> Ver Detalles
+                            </a>
+                        `;
+                        replyIsHtml = true;
+                    } else {
+                        reply = "No encontramos un producto específico para esos síntomas en nuestro inventario simple.";
+                    }
+                } 
+                
+                else if (lowerText.includes("hola") || lowerText.includes("ola") || lowerText.includes("ayuda")) {
+                    reply = '¡Hola! Soy tu asistente. ¿Cómo puedo ayudarte? Pregunta por "cita", "farmacia" o por algún síntoma como "dolor de cabeza".';
+                } else if (lowerText.includes("consulta rapida")) {
+                     reply = "ADVERTENCIA: esto solo es una recomendacion y no debe tomarse como una consulta medica. esto es solamente para dar una idea de que medicamentos puedes tomar ante sintomas simples, si los problemas persisten consulta a tu medico.";
+                } else if (lowerText.includes("doctores")) {
+                     reply = "Revisa nuestro catálogo de doctores para que puedas encontrar uno que se adecua a tus necesidades.";
+                } else {
+                    reply = "Lo siento, no entendí tu consulta. Pregunta por 'cita', 'farmacia' o 'ayuda'.";
+                }
+
+                setTimeout(() => {
+                    addMessage(reply, "bot", replyIsHtml);
+                }, 800);
+            }
+        });
+    </script>
+</body>
+</html>

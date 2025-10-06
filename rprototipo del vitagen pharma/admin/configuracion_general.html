@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración General - Admin</title>
+    <link rel="stylesheet" href="../styles.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .config-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .form-group label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .full-width {
+            grid-column: 1 / -1; 
+        }
+        .btn-config-submit {
+            background-color: var(--color-principal);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+    <header style="background-color: var(--color-principal);">
+        <a href="../index.html" class="logo-link">
+             <img src="../src/logo.jpg" alt="Logo Pharma Vitagen" class="logo-img">
+             <h1 style="color: white;"><i class="fas fa-store"></i> PHARMA VITAGEN</h1>
+        </a>
+    </header>
+
+    <div class="content-page" style="padding-top: 20px;">
+        <h2 style="text-align: center;"><i class="fas fa-cog"></i> Configuración General del Sitio</h2>
+        <p style="text-align: center; color: #6c757d; margin-bottom: 30px;">
+            Ajusta los parámetros y textos principales de tu sitio web.
+        </p>
+
+        <form id="configForm" class="config-form-grid">
+            
+            <h3>Ajustes Generales</h3>
+
+            <div class="form-group">
+                <label for="siteName">Nombre del Sitio Web:</label>
+                <input type="text" id="siteName" name="siteName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="shippingCost">Costo de Envío Estándar ($):</label>
+                <input type="number" id="shippingCost" name="shippingCost" required min="0.00" step="0.01">
+            </div>
+
+            <div class="form-group">
+                <label for="lowStockThreshold">Umbral de Stock Bajo (Unidades):</label>
+                <input type="number" id="lowStockThreshold" name="lowStockThreshold" required min="1">
+            </div>
+
+            <div class="form-group">
+                <label for="pharmacyPhone">Teléfono de la Farmacia:</label>
+                <input type="text" id="pharmacyPhone" name="pharmacyPhone">
+            </div>
+
+            <div class="form-group full-width">
+                <label for="welcomeMessage">Mensaje de Bienvenida (Banner Principal):</label>
+                <textarea id="welcomeMessage" name="welcomeMessage" rows="3"></textarea>
+            </div>
+            
+            <button type="submit" class="btn-config-submit">
+                <i class="fas fa-save"></i> Guardar Configuración
+            </button>
+        </form>
+
+        <a href="dashboard.html" class="btn-form-submit" style="width: 300px; margin: 40px auto 20px auto; background-color: var(--color-bloque-a);">
+            <i class="fas fa-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+
+    <footer><p>&copy; 2025 Pharma Vitagen.</p></footer>
+
+    <script>
+        // Claves de configuración
+        const CONFIG_KEYS = {
+            SITE_NAME: 'config_site_name',
+            LOW_STOCK: 'config_low_stock',
+            SHIPPING_COST: 'config_shipping_cost',
+            WELCOME_MSG: 'config_welcome_msg',
+            PHONE: 'config_pharmacy_phone'
+        };
+
+        // Valores por defecto
+        const DEFAULT_CONFIG = {
+            [CONFIG_KEYS.SITE_NAME]: 'PHARMA VITAGEN',
+            [CONFIG_KEYS.LOW_STOCK]: 20, 
+            [CONFIG_KEYS.SHIPPING_COST]: 5.00,
+            [CONFIG_KEYS.WELCOME_MSG]: 'Encuentra y confía. Tu salud 24/7 para ti.',
+            [CONFIG_KEYS.PHONE]: '+52 55 1234 5678'
+        };
+
+        function cargarConfiguracion() {
+            document.getElementById('siteName').value = localStorage.getItem(CONFIG_KEYS.SITE_NAME) || DEFAULT_CONFIG[CONFIG_KEYS.SITE_NAME];
+            document.getElementById('lowStockThreshold').value = localStorage.getItem(CONFIG_KEYS.LOW_STOCK) || DEFAULT_CONFIG[CONFIG_KEYS.LOW_STOCK];
+            document.getElementById('shippingCost').value = localStorage.getItem(CONFIG_KEYS.SHIPPING_COST) || DEFAULT_CONFIG[CONFIG_KEYS.SHIPPING_COST];
+            document.getElementById('welcomeMessage').value = localStorage.getItem(CONFIG_KEYS.WELCOME_MSG) || DEFAULT_CONFIG[CONFIG_KEYS.WELCOME_MSG];
+            document.getElementById('pharmacyPhone').value = localStorage.getItem(CONFIG_KEYS.PHONE) || DEFAULT_CONFIG[CONFIG_KEYS.PHONE];
+        }
+
+        document.getElementById('configForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            localStorage.setItem(CONFIG_KEYS.SITE_NAME, document.getElementById('siteName').value.trim());
+            localStorage.setItem(CONFIG_KEYS.LOW_STOCK, document.getElementById('lowStockThreshold').value);
+            localStorage.setItem(CONFIG_KEYS.SHIPPING_COST, document.getElementById('shippingCost').value);
+            localStorage.setItem(CONFIG_KEYS.WELCOME_MSG, document.getElementById('welcomeMessage').value.trim());
+            localStorage.setItem(CONFIG_KEYS.PHONE, document.getElementById('pharmacyPhone').value.trim());
+
+            alert('Configuración guardada con éxito.');
+        });
+
+        cargarConfiguracion();
+    </script>
+</body>
+</html>

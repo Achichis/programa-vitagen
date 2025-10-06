@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Inventario - Admin</title>
+    <link rel="stylesheet" href="../styles.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .inventory-grid {
+            display: flex;
+            gap: 30px;
+            max-width: 1000px;
+            margin: 40px auto;
+        }
+        .form-section-inventory, .list-section-inventory {
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .form-section-inventory {
+            flex: 1;
+            background-color: #f9f9f9;
+        }
+        .list-section-inventory {
+            flex: 2;
+            background-color: #fff;
+        }
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .product-name {
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+        .product-details {
+            font-size: 0.9em;
+            color: #555;
+        }
+        .stock-level {
+            font-weight: bold;
+            margin-left: 15px;
+        }
+        .stock-low { color: #dc3545; } /* Rojo para stock bajo */
+        .stock-ok { color: #28aa45; } /* Verde para stock normal */
+    </style>
+</head>
+<body>
+    <header style="background-color: var(--color-principal);">
+        <a href="../index.html" class="logo-link">
+             <img src="../src/logo.jpg" alt="Logo Pharma Vitagen" class="logo-img">
+             <h1 style="color: white;"><i class="fas fa-user-shield"></i> PANEL ADMIN</h1>
+        </a>
+    </header>
+
+    <div class="content-page" style="padding-top: 20px;">
+        <h2 style="text-align: center;"><i class="fas fa-box"></i> Gestión de Productos de Farmacia</h2>
+        <p style="text-align: center; color: #6c757d; margin-bottom: 30px;">
+            Controla existencias, ventas y agrega nuevos productos al inventario.
+        </p>
+
+        <div class="inventory-grid">
+            
+            <div class="form-section-inventory">
+                <h3><i class="fas fa-plus"></i> Agregar/Editar Producto</h3>
+                <form id="productForm">
+                    <input type="hidden" id="productId">
+                    
+                    <div class="form-group">
+                        <label for="nombre">Nombre del Producto:</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="existencia">Existencia Actual:</label>
+                        <input type="number" id="existencia" name="existencia" required min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="precio">Precio ($):</label>
+                        <input type="number" step="0.01" id="precio" name="precio" required min="0">
+                    </div>
+                    
+                    <button type="submit" class="btn-form-submit" id="saveProductButton" style="background-color: black; margin-top: 15px;">
+                        <i class="fas fa-save"></i> Guardar Producto
+                    </button>
+                    <button type="button" class="btn-form-submit" id="cancelEditButton" style="background-color: #6c757d; margin-top: 15px; display: none;" onclick="resetForm()">
+                        <i class="fas fa-times"></i> Cancelar Edición
+                    </button>
+                </form>
+            </div>
+
+            <div class="list-section-inventory">
+                <h3><i class="fas fa-list-alt"></i> Inventario Actual</h3>
+                <div id="inventoryList">
+                    <p style="text-align: center; color: #007bff; font-weight: bold;">Cargando inventario...</p>
+                </div>
+            </div>
+
+        </div>
+
+        <a href="dashboard.html" class="btn-form-submit" style="width: 300px; margin: 40px auto 20px auto; background-color: var(--color-bloque-a);">
+            <i class="fas fa-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+
+    <footer><p>&copy; 2025 Pharma Vitagen.</p></footer>
+
+    <script>
+        const INVENTORY_STORAGE_KEY = 'inventario'; // CLAVE CORRECTA
+        
+        // Cargar el inventario
+        function loadInventory() {
+            const container = document.getElementById('inventoryList');
+            // Carga el inventario usando la clave correcta
+            let inventory = JSON.parse(localStorage.getItem(INVENTORY_STORAGE_KEY)) || [];
+            
+            if (inventory.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #dc3545; font-weight: bold;">No hay productos registrados en el inventario.</p>';
+                return;
+            }
+
+            let listHTML = '';
+            // Ordenar alfabéticamente
+            inventory.sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+            inventory.forEach(product => {
+                const isLowStock = product.existencia < 10;
+                const stockClass = isLowStock ? 'stock-low' : 'stock-ok';
+
+                listHTML += `
+                    <div class="product-item">
+                        <div>
+                            <span class="product-name">${product.nombre}</span>
+                            <span class="product-details">($${product.precio.toFixed(2)})</span>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <span class="stock-level ${stockClass}">
+                                Stock: ${product.existencia} ${isLowStock ? '(¡Bajo!)' : ''}
+                            </span>
+                            <button class="btn-action" style="background-color: #ffc107; color: black; margin-left: 10px;" onclick="editProduct(${product.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-action" style="background-color: #dc3545; color: white;" onclick="deleteProduct(${product.id})">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = listHTML;
+        }
+
+        // Manejo del formulario (Agregar/Editar)
+        document.getElementById('productForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const id = document.getElementById('productId').value;
+            const nombre = document.getElementById('nombre').value.trim();
+            const existencia = parseInt(document.getElementById('existencia').value);
+            const precio = parseFloat(document.getElementById('precio').value);
+
+            let inventory = JSON.parse(localStorage.getItem(INVENTORY_STORAGE_KEY)) || [];
+
+            if (id) {
+                // Modo Edición
+                inventory = inventory.map(p => {
+                    if (p.id == id) {
+                        return { id: parseInt(id), nombre, existencia, precio };
+                    }
+                    return p;
+                });
+                alert(`Producto ${nombre} actualizado.`);
+            } else {
+                // Modo Nuevo
+                const newProduct = {
+                    id: Date.now(),
+                    nombre,
+                    existencia,
+                    precio
+                };
+                inventory.push(newProduct);
+                alert(`Producto ${nombre} agregado al inventario.`);
+            }
+
+            localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(inventory));
+            resetForm();
+            loadInventory();
+        });
+
+        // Función para cargar datos en el formulario para edición
+        function editProduct(id) {
+            let inventory = JSON.parse(localStorage.getItem(INVENTORY_STORAGE_KEY)) || [];
+            const product = inventory.find(p => p.id === id);
+
+            if (product) {
+                document.getElementById('productId').value = product.id;
+                document.getElementById('nombre').value = product.nombre;
+                document.getElementById('existencia').value = product.existencia;
+                document.getElementById('precio').value = product.precio;
+                
+                document.getElementById('saveProductButton').innerHTML = '<i class="fas fa-redo"></i> Actualizar Producto';
+                document.getElementById('saveProductButton').style.backgroundColor = '#007bff';
+                document.getElementById('cancelEditButton').style.display = 'inline-block';
+            }
+        }
+
+        // Función para eliminar producto
+        function deleteProduct(id) {
+            if (confirm('¿Estás seguro de eliminar este producto del inventario?')) {
+                let inventory = JSON.parse(localStorage.getItem(INVENTORY_STORAGE_KEY)) || [];
+                const updatedInventory = inventory.filter(p => p.id !== id);
+                localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(updatedInventory));
+                loadInventory();
+                alert('Producto eliminado.');
+            }
+        }
+
+        // Función para resetear el formulario
+        function resetForm() {
+            document.getElementById('productForm').reset();
+            document.getElementById('productId').value = '';
+            document.getElementById('saveProductButton').innerHTML = '<i class="fas fa-save"></i> Guardar Producto';
+            document.getElementById('saveProductButton').style.backgroundColor = 'black';
+            document.getElementById('cancelEditButton').style.display = 'none';
+        }
+
+        // Cargar los productos al iniciar
+        loadInventory();
+    </script>
+</body>
+</html>

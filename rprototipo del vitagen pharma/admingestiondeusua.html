@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios - Admin</title>
+    <link rel="stylesheet" href="../styles.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .user-table th, .user-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .user-table th {
+            background-color: var(--color-principal);
+            color: white;
+        }
+        .user-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .user-table .rol-paciente { color: #007bff; font-weight: 700; }
+        .user-table .rol-admin { color: #dc3545; font-weight: 700; }
+        .user-table .rol-doctor { color: #28a745; font-weight: 700; }
+        .btn-action {
+            padding: 5px 10px;
+            margin-right: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-action.delete { background-color: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+    <header style="background-color: var(--color-principal);">
+        <a href="../index.html" class="logo-link">
+             <img src="../src/logo.jpg" alt="Logo Pharma Vitagen" class="logo-img">
+             <h1 style="color: white;"><i class="fas fa-users-cog"></i> PHARMA VITAGEN</h1>
+        </a>
+    </header>
+
+    <div class="content-page" style="padding-top: 20px;">
+        <h2 style="text-align: center;"><i class="fas fa-users-cog"></i> Gestión de Roles y Cuentas</h2>
+        <p style="text-align: center; color: #6c757d; margin-bottom: 30px;">
+            Lista de todos los usuarios registrados en el sistema (incluye cuentas fijas).
+        </p>
+
+        <div id="user-list-container">
+            </div>
+        
+        <a href="dashboard.html" class="btn-form-submit" style="width: 300px; margin: 40px auto 20px auto; background-color: var(--color-bloque-a);">
+            <i class="fas fa-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+
+    <footer><p>&copy; 2025 Pharma Vitagen.</p></footer>
+
+    <script>
+        // Usuarios fijos
+        const USUARIOS_FIJOS = [
+            { nombre: 'Administrador Principal', correo: 'admin@test.com', contrasena: '1234', rol: 'admin' },
+            { nombre: 'Dr. Alejandro Ruiz', correo: 'doctor@test.com', contrasena: '1234', rol: 'doctor' }
+        ];
+
+        function cargarUsuarios() {
+            const container = document.getElementById('user-list-container');
+            
+            const pacientesRegistrados = JSON.parse(localStorage.getItem('usuarios')) || [];
+            
+            const todosLosUsuarios = [...USUARIOS_FIJOS, ...pacientesRegistrados];
+
+            let tableHTML = `
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Rol</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            todosLosUsuarios.forEach((user, index) => {
+                const rolClass = 'rol-' + user.rol;
+                const esFijo = (index < USUARIOS_FIJOS.length);
+                const nombreMostrar = user.nombre || 'N/A'; 
+
+                tableHTML += `
+                    <tr>
+                        <td>${nombreMostrar}</td>
+                        <td>${user.correo}</td>
+                        <td><span class="${rolClass}">${user.rol.toUpperCase()}</span></td>
+                        <td>
+                            ${esFijo ? 
+                                `<span style="color: #6c757d; font-size: 0.9em;">Cuenta Fija</span>` : 
+                                `<button class="btn-action delete" onclick="eliminarUsuario('${user.correo}')">Eliminar</button>`
+                            }
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = tableHTML;
+        }
+
+        function eliminarUsuario(correoAEliminar) {
+            if (confirm(`¿Estás seguro de eliminar la cuenta con correo: ${correoAEliminar}?`)) {
+                let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+                
+                const nuevosUsuarios = usuarios.filter(u => u.correo !== correoAEliminar);
+                
+                localStorage.setItem('usuarios', JSON.stringify(nuevosUsuarios));
+                
+                alert('Usuario eliminado con éxito.');
+                cargarUsuarios(); 
+            }
+        }
+
+        // Ejecutar la función al cargar la página
+        cargarUsuarios();
+    </script>
+</body>
+</html>

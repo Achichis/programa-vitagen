@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Administración</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+       
+        .admin-options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+            padding: 0 20px;
+            max-width: 1200px;
+            margin: 50px auto;
+        }
+        .admin-option-card {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 180px;
+        }
+        .admin-option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        .admin-option-card i, .admin-option-card .card-icon {
+            font-size: 3em;
+            color: var(--color-principal);
+            margin-bottom: 10px;
+        }
+        .card-text {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #1e3a8a;
+        }
+        .subtext {
+            font-size: 0.9em;
+            font-weight: normal;
+            color: #6c757d;
+            display: block;
+            margin-top: 5px;
+        }
+        .main-cta {
+            background-color: black;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 20px;
+            transition: background-color 0.2s;
+        }
+        .main-cta:hover {
+            background-color: #333;
+        }
+
+        /* estilos del chatbot */
+        .chatbot-bubble {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #17a2b8;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-size: 28px;
+            z-index: 99999;
+        }
+        .chatbot-window {
+            position: fixed;
+            bottom: 90px;
+            right: 25px;
+            width: 300px;
+            max-height: 400px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden; 
+            transform: scale(0.1); 
+            transform-origin: bottom right; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 99998;
+        }
+        .chatbot-window.open {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+        .chatbot-header {
+            background: #17a2b8;
+            color: white;
+            padding: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .chatbot-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+        }
+        .message {
+            margin: 5px 0;
+            padding: 8px 12px;
+            border-radius: 12px;
+            max-width: 85%;
+        }
+        .user-message {
+            background: #17a2b8;
+            color: white;
+            margin-left: auto;
+        }
+        .bot-message {
+            background: #f1f1f1;
+            color: #333;
+            margin-right: auto;
+        }
+        .btn-whatsapp-chat {
+            display: block; 
+            padding: 8px 10px;
+            margin-top: 10px;
+            text-align: center;
+            background-color: #25D366; 
+            color: white !important;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: background-color 0.3s;
+            font-size: 13px;
+        }
+        .btn-whatsapp-chat i {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header style="background-color: var(--color-principal);">
+        <a href="../index.html" class="logo-link">
+             <img src="../src/logo.jpg" alt="Logo Pharma Vitagen" class="logo-img">
+             <h1 style="color: white;"><i class="fas fa-user-shield"></i> PANEL ADMIN</h1>
+        </a>
+        <nav class="nav-links">
+            <a href="../login.html" onclick="localStorage.clear()" style="color: white;">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </a>
+        </nav>
+    </header>
+
+    <div class="content-page" style="padding-top: 20px;">
+        <h2 style="text-align: center;">Gestión Total del Sistema</h2>
+        <p style="text-align: center; color: #6c757d; margin-bottom: 30px;">
+            Utiliza este panel para administrar todos los aspectos de la plataforma (Roles, Doctores, Citas, Inventario).
+        </p>
+        
+        <div style="text-align: center;">
+            <a href="agregar_doctor.html" class="main-cta">
+                <i class="fas fa-user-plus"></i> Agregar Nuevo Doctor
+            </a>
+        </div>
+
+        <h3 style="text-align: center; color: #1e3a8a; margin-top: 50px;">Opciones de Administración</h3>
+
+        <div class="admin-options-grid">
+            
+            <a href="gestion_roles.html" class="admin-option-card">
+                <i class="fas fa-users-cog"></i>
+                <div class="card-text">
+                    Gestión de Roles y Cuentas
+                    <span class="subtext">(Pacientes, Doctores, Admin)</span>
+                </div>
+            </a>
+
+            <a href="gestion_citas.html" class="admin-option-card">
+                <i class="fas fa-calendar-alt"></i>
+                <div class="card-text">
+                    Ver/Modificar Todas las Citas
+                </div>
+            </a>
+            
+            <a href="reportes.html" class="admin-option-card">
+                <i class="fas fa-chart-line"></i>
+                <div class="card-text">
+                    Reportes y 
+                    <span class="subtext">Estadísticas de Uso</span>
+                </div>
+            </a>
+            
+            <a href="gestion_inventario.html" class="admin-option-card">
+                <i class="fas fa-box"></i>
+                <div class="card-text">
+                    Control de Inventario
+                    <span class="subtext">y Productos (Farmacia)</span>
+                </div>
+            </a>
+
+            <a href="configuracion_general.html" class="admin-option-card">
+                <i class="fas fa-cog"></i>
+                <div class="card-text">
+                    Configuración General
+                    <span class="subtext">del Sitio Web</span>
+                </div>
+            </a>
+            
+            <a href="../index.html" class="admin-option-card" style="background-color: #f8f9fa; border: 1px dashed #ced4da;">
+                <i class="fas fa-home" style="color: #6c757d;"></i>
+                <div class="card-text">
+                    <span style="color: #6c757d;">Volver al Inicio</span>
+                </div>
+            </a>
+        </div>
+        
+    </div>
+
+    <footer><p>&copy; 2025 Pharma Vitagen.</p></footer>
+
+    <div class="chatbot-bubble" id="chatbot-bubble">
+        <i class="fas fa-comment-alt"></i>
+    </div>
+    <div class="chatbot-window" id="chatbot-window">
+        <div class="chatbot-header">Asistente Virtual</div>
+        <div class="chatbot-messages" id="chatbot-messages">
+            <div class="message bot-message">¡Hola! Soy tu asistente virtual. Pregunta por "cita", "farmacia" o "ayuda".</div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="chatbot-input-text" placeholder="Escribe tu mensaje...">
+            <button id="chatbot-send"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // elementos del chatbot
+            const bubble = document.getElementById('chatbot-bubble');
+            const windowElement = document.getElementById('chatbot-window');
+            const messagesContainer = document.getElementById('chatbot-messages');
+            const sendBtn = document.getElementById('chatbot-send');
+            const input = document.getElementById('chatbot-input-text');
+
+            // Inventario (Simulado para que el chatbot pueda responder)
+            const INVENTARIO_SIMPLE = [
+                { nombre: 'Paracetamol 500mg (20 Tab)', precio: 25.50, link: '../farmacia.html' },
+                { nombre: 'Agrifen (Antigripal)', precio: 22.00, link: '../farmacia.html' }
+            ];
+
+            // mi numero para el whatsa
+            const TELEFONO_CLINICA = '523345883001';
+
+
+            // evento para abrir/cerrar el chatbot
+            if (bubble && windowElement) {
+                bubble.addEventListener('click', () => {
+                    windowElement.classList.toggle('open'); 
+                    if (windowElement.classList.contains('open') && input) {
+                        input.focus();
+                    }
+                });
+            }
+
+            if (sendBtn && input && messagesContainer) {
+                sendBtn.addEventListener("click", () => { 
+                    const text = input.value.trim();
+                    if (text !== "") {
+                        addMessage(text, "user");
+                        input.value = "";
+                        botReply(text);
+                    }
+                });
+
+                input.addEventListener("keypress", (e) => {
+                    if (e.key === "Enter") {
+                        sendBtn.click();
+                    }
+                });
+            }
+
+            //funcion para generar enlace de whatsapp
+            
+            function generarEnlaceWhatsApp(motivo) {
+                const mensajeBase = `¡Hola! Necesito ayuda con el siguiente tema: ${motivo}. Vengo del chatbot de Pharma Vitagen.`;
+                const mensajeCodificado = encodeURIComponent(mensajeBase);
+                return `https://wa.me/${TELEFONO_CLINICA}?text=${mensajeCodificado}`;
+            }
+
+            function addMessage(text, sender, isHtml = false) {
+                if (!messagesContainer) return; 
+
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', `${sender}-message`);
+                
+                if (isHtml) {
+                    messageDiv.innerHTML = text;
+                } else {
+                    messageDiv.textContent = text;
+                }
+                
+                messagesContainer.appendChild(messageDiv);
+                
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            // esta es funcion del chadtbot para añadir al carrito, pero en admin no se usa
+            window.añadirAlCarrito = function(nombreProducto, precioProducto) {
+                alert(`AVISO ADMIN: La función de añadir al carrito no está disponible en el panel de Administración. Por favor, navega a la sección de Farmacia para realizar compras.`);
+            }
+
+            function botReply(userText) {
+                const lowerText = userText.toLowerCase();
+                let reply = "";
+                let replyIsHtml = false;
+                
+                const btnClass = 'class="btn-whatsapp-chat"'; 
+                const btnCartClass = 'style="background-color: #007bff; color: white; border: none; padding: 8px 10px; margin-top: 5px; border-radius: 5px; cursor: pointer; display: block; text-align: center; font-size: 13px; font-weight: 700; text-decoration: none;"';
+
+
+                // Response Logic
+                if (lowerText.includes("cita") || lowerText.includes("agendar") || lowerText.includes("reagendar") || lowerText.includes("cancelar")) {
+                    const whatsappLink = generarEnlaceWhatsApp("Reagendar, agendar o consultar sobre una cita"); 
+                    reply = `
+                        Si deseas <strong>agendar, reagendar o cancelar</strong> una cita, haz clic en el botón para contactar a un asistente de manera rápida:
+                        <br>
+                        <a href="${whatsappLink}" target="_blank" ${btnClass}>
+                            <i class="fab fa-whatsapp"></i> Hablar con un Asistente
+                        </a>
+                    `;
+                    replyIsHtml = true;
+                } else if (lowerText.includes("farmacia") || lowerText.includes("productos")) {
+                    reply = `Aquí puedes ver nuestro catálogo completo: <a href="../farmacia.html" ${btnClass}><i class="fas fa-pills"></i> Ir a Farmacia</a>`;
+                    replyIsHtml = true;
+                } 
+                
+                // Lógica de producto )
+                else if (lowerText.includes("fiebre") || lowerText.includes("dolor") || lowerText.includes("cabeza")) {
+                    const prod = INVENTARIO_SIMPLE.find(p => p.nombre.includes('Paracetamol'));
+                    if (prod) {
+                        // redirección a farmacia.html
+
+                        reply = `
+                            Para esos síntomas, recomendamos <strong>${prod.nombre}</strong> ($${prod.precio.toFixed(2)}).
+                            <a href="../farmacia.html" ${btnCartClass}>
+                                <i class="fas fa-cart-plus"></i> Ir a la Farmacia
+                            </a>
+                            <a href="${prod.link}" ${btnClass} style="margin-top: 10px; background-color: #ff69b4;">
+                                <i class="fas fa-info-circle"></i> Ver Detalles
+                            </a>
+                        `;
+                        replyIsHtml = true;
+                    } else {
+                        reply = "No encontramos un producto específico para esos síntomas en nuestro inventario simple.";
+                    }
+                } 
+                
+                else if (lowerText.includes("gripa") || lowerText.includes("resfriado")) {
+                    const prod = INVENTARIO_SIMPLE.find(p => p.nombre.includes('Agrifen'));
+                    if (prod) {
+                        reply = `
+                            Prueba <strong>${prod.nombre}</strong> ($${prod.precio.toFixed(2)}).
+                            <a href="../farmacia.html" ${btnCartClass}>
+                                <i class="fas fa-cart-plus"></i> Ir a la Farmacia
+                            </a>
+                            <a href="${prod.link}" ${btnClass} style="margin-top: 10px; background-color: #ff69b4;">
+                                <i class="fas fa-info-circle"></i> Ver Detalles
+                            </a>
+                        `;
+                        replyIsHtml = true;
+                    } else {
+                        reply = "No encontramos un producto específico para esos síntomas en nuestro inventario simple.";
+                    }
+                } 
+                
+                else if (lowerText.includes("hola") || lowerText.includes("ola") || lowerText.includes("ayuda")) {
+                    reply = '¡Hola! Soy tu asistente. ¿Cómo puedo ayudarte? Pregunta por "cita", "farmacia" o por algún síntoma como "dolor de cabeza".';
+                } else if (lowerText.includes("consulta rapida")) {
+                     reply = "ADVERTENCIA: esto solo es una recomendacion y no debe tomarse como una consulta medica. esto es solamente para dar una idea de que medicamentos puedes tomar ante sintomas simples, si los problemas persisten consulta a tu medico.";
+                } else if (lowerText.includes("doctores")) {
+                     reply = "Revisa nuestro catálogo de doctores para que puedas encontrar uno que se adecua a tus necesidades.";
+                } else {
+                    reply = "Lo siento, no entendí tu consulta. Pregunta por 'cita', 'farmacia' o 'ayuda'.";
+                }
+
+                setTimeout(() => {
+                    addMessage(reply, "bot", replyIsHtml);
+                }, 800);
+            }
+        });
+    </script>
+</body>
+</html>

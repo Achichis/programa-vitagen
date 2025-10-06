@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Carrito de Compras - Pharma Vitagen</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Estilos CSS para el carrito dinámico */
+        .cart-items {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        .cart-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 0.5fr; /* Ajuste para las 5 columnas */
+            gap: 15px;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        .item-producto {
+            display: flex;
+            align-items: center;
+        }
+        .item-img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-right: 15px;
+        }
+        .item-quantity input {
+            width: 50px;
+            padding: 5px;
+            text-align: center;
+        }
+        .cart-summary {
+            margin-top: 30px;
+            border-top: 2px solid #f0f0f0;
+            padding-top: 20px;
+            max-width: 400px;
+            margin-left: auto;
+        }
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .total-line {
+            font-weight: bold;
+            font-size: 1.2em;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+        .btn-checkout {
+            display: block;
+            background-color: #ff69b4;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .btn-seguir-comprando {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .cart-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 0.5fr;
+            gap: 15px;
+            font-weight: bold;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo-link">
+            <img src="src/logo.jpg" alt="Logo Pharma Vitagen" class="logo-img"> 
+            <h1>PHARMA VITAGEN</h1>
+        </a>
+        <nav class="nav-links">
+            <a href="agendar_cita.html">📅 Agendar Cita</a>
+            <a href="ayuda.html">Ayuda</a>
+            <a href="login.html" id="btn-login-nav">🔑 Inicio de Sesión</a>
+            <a href="carrito.html" class="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count" id="cart-count-header">0</span>
+            </a>
+        </nav>
+    </header>
+
+    <div class="content-page carrito-page">
+        <h2>🛒 Mi Carrito de Compras</h2>
+
+        <div class="cart-header">
+            <div class="header-producto">Producto</div>
+            <div class="header-precio-unitario">Precio Unitario</div>
+            <div class="header-cantidad">Cantidad</div>
+            <div class="header-subtotal-item">Subtotal</div>
+            <div class="header-acciones"></div>
+        </div>
+
+        <ul class="cart-items" id="cart-items-list">
+            </ul>
+        
+        <div class="cart-footer-actions">
+             <a href="farmacia.html" class="btn-seguir-comprando">🛍️ Seguir Comprando</a>
+        </div>
+        
+        <div class="cart-summary">
+            <h3>Resumen de la Orden</h3>
+            <div class="summary-line">
+                <span>Subtotal (<span id="total-items-count">0</span> productos):</span>
+                <span id="subtotal-carrito">$0.00</span>
+            </div>
+            <div class="summary-line">
+                <span>Costo de Envío:</span>
+                <span id="costo-envio">$5.00</span>
+            </div>
+            <div class="summary-line total-line">
+                <span>Total a Pagar:</span>
+                <span class="total-price" id="total-a-pagar">$5.00</span>
+            </div>
+            
+            <a href="checkout.html" class="btn-checkout">Continuar con la Compra <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Pharma Vitagen. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        const CARRITO_STORAGE_KEY = 'carritoItems';
+        // Mismo mapa de imágenes que en farmacia.html para mostrar las imágenes en el carrito
+        const IMAGE_MAP = {
+            'Paracetamol 500mg (20 Tab)': 'src/paracetamol.jpg',
+            'Ibuprofeno 400mg (20 Tab)': 'src/ibuprofeno.jpg',
+            'Omeprazol 20mg (14 Cápsulas)': 'src/omeprazol.jpg',
+            'Neurobión B12 Forte': 'src/Dolo-Neurobion.jpg',
+            'Pepto Bismol (Tabletas)': 'src/pepto-bismol.jpg',
+            'Salbutamol (Inhalador)': 'src/Salbutamol.jpg',
+            'Treda (Antidiarreico)': 'src/Treda.jpg',
+            'Metoprolol 50mg (30 Tab)': 'src/metroprolol.jpg',
+            'Agrifen (Antigripal)': 'src/agrifen.jpg',
+            'MEMBITROL (TINIDAZOL 1 GR) (antibacteriano)': 'src/membitrol.jpg',
+            'ceftriazona (antibiotico)': 'src/ceftriazona.jpg'
+        };
+
+        const COSTO_ENVIO = 5.00; // Define el costo de envío
+
+        function cargarCarrito() {
+            const itemsList = document.getElementById('cart-items-list');
+            const carrito = JSON.parse(localStorage.getItem(CARRITO_STORAGE_KEY)) || [];
+            itemsList.innerHTML = ''; // Limpiar la lista actual
+
+            let subtotalGlobal = 0;
+            let totalItems = 0;
+
+            if (carrito.length === 0) {
+                itemsList.innerHTML = '<li style="grid-column: 1 / -1; text-align: center; padding: 20px;">Tu carrito está vacío. ¡Añade productos desde la <a href="farmacia.html">Farmacia</a>!</li>';
+            } else {
+                carrito.forEach((item, index) => {
+                    const imageUrl = IMAGE_MAP[item.nombre] || 'https://via.placeholder.com/60x60?text=Prod';
+                    const itemSubtotal = item.precio * item.cantidad;
+                    subtotalGlobal += itemSubtotal;
+                    totalItems += item.cantidad;
+
+                    const itemHTML = `
+                        <li class="cart-item" data-index="${index}">
+                            <div class="item-producto">
+                                <img src="${imageUrl}" alt="${item.nombre}" class="item-img"> 
+                                <div class="item-info">
+                                    <h4>${item.nombre}</h4>
+                                </div>
+                            </div>
+                            
+                            <div class="item-precio-unitario" data-label="Precio Unitario:">$${item.precio.toFixed(2)}</div>
+                            
+                            <div class="item-quantity" data-label="Cantidad:">
+                                <input type="number" value="${item.cantidad}" min="1" onchange="actualizarCantidad(${index}, this.value)">
+                            </div>
+                            
+                            <div class="item-subtotal-item" data-label="Subtotal:">$${itemSubtotal.toFixed(2)}</div>
+
+                            <div class="item-actions">
+                                <button class="btn-eliminar" aria-label="Eliminar ${item.nombre}" onclick="eliminarProducto(${index})">
+                                     <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </li>
+                    `;
+                    itemsList.insertAdjacentHTML('beforeend', itemHTML);
+                });
+            }
+            
+            // Actualizar resumen
+            document.getElementById('total-items-count').textContent = totalItems;
+            document.getElementById('subtotal-carrito').textContent = `$${subtotalGlobal.toFixed(2)}`;
+            const totalPagar = subtotalGlobal + COSTO_ENVIO;
+            document.getElementById('total-a-pagar').textContent = `$${totalPagar.toFixed(2)}`;
+            document.getElementById('cart-count-header').textContent = carrito.length;
+        }
+
+        // Función para actualizar la cantidad (requiere recargar el carrito)
+        function actualizarCantidad(index, nuevaCantidad) {
+            let carrito = JSON.parse(localStorage.getItem(CARRITO_STORAGE_KEY)) || [];
+            const qty = parseInt(nuevaCantidad);
+            
+            if (qty > 0) {
+                carrito[index].cantidad = qty;
+            } else {
+                // Si la cantidad es 0 o menos, mejor eliminar
+                carrito.splice(index, 1);
+            }
+
+            localStorage.setItem(CARRITO_STORAGE_KEY, JSON.stringify(carrito));
+            cargarCarrito(); // Recargar la lista para actualizar subtotales
+        }
+        
+        // Función para eliminar un producto
+        function eliminarProducto(index) {
+             let carrito = JSON.parse(localStorage.getItem(CARRITO_STORAGE_KEY)) || [];
+             carrito.splice(index, 1); // Elimina 1 elemento en la posición 'index'
+             localStorage.setItem(CARRITO_STORAGE_KEY, JSON.stringify(carrito));
+             cargarCarrito(); // Recargar la lista para actualizar el carrito
+        }
+
+        // Cargar el carrito al iniciar la página
+        cargarCarrito();
+    </script>
+</body>
+</html>

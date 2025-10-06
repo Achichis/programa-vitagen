@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Citas - Admin</title>
+    <link rel="stylesheet" href="../styles.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .citas-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .citas-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .citas-table th, .citas-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            font-size: 0.9em;
+        }
+        .citas-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            color: #333;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.8em;
+            color: white;
+        }
+        .status-pendiente { background-color: #ffc107; color: black; }
+        .status-aprobada { background-color: #28a745; }
+        .status-rechazada { background-color: #dc3545; }
+        .btn-action {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+            font-size: 0.85em;
+        }
+        .btn-approve { background-color: #007bff; color: white; }
+        .btn-reject { background-color: #dc3545; color: white; }
+        .btn-delete { background-color: #6c757d; color: white; }
+    </style>
+</head>
+<body>
+    <header style="background-color: var(--color-principal);">
+        <a href="../index.html" class="logo-link">
+             <img src="../src/logo.jpg" alt="Logo Pharma Vitagen" class="logo-img">
+             <h1 style="color: white;"><i class="fas fa-user-shield"></i> PANEL ADMIN</h1>
+        </a>
+    </header>
+
+    <div class="content-page" style="padding-top: 20px;">
+        <h2 style="text-align: center;"><i class="fas fa-calendar-alt"></i> Gestión de Citas Médicas</h2>
+        <p style="text-align: center; color: #6c757d; margin-bottom: 30px;">
+            Revisa y gestiona todas las solicitudes de cita recibidas.
+        </p>
+
+        <div class="citas-container">
+            <h3 style="margin-bottom: 20px;">Citas Pendientes y Programadas</h3>
+            
+            <table class="citas-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha y Hora</th>
+                        <th>Paciente</th>
+                        <th>Doctor/Especialidad</th>
+                        <th>Motivo</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="citas-body">
+                    </tbody>
+            </table>
+            
+            <p id="citas-mensaje" style="text-align: center; margin-top: 20px; font-weight: bold; display: none;">No hay citas registradas.</p>
+        </div>
+
+        <a href="dashboard.html" class="btn-form-submit" style="width: 300px; margin: 40px auto 20px auto; background-color: var(--color-bloque-a);">
+            <i class="fas fa-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+
+    <footer><p>&copy; 2025 Pharma Vitagen.</p></footer>
+
+    <script>
+        const CITA_STORAGE_KEY = 'citas'; // Usaremos 'citas' como clave
+        
+        // Función para cargar los datos de ejemplo si no existen
+        function inicializarCitas() {
+            if (!localStorage.getItem(CITA_STORAGE_KEY)) {
+                const initialCitas = [
+                    { id: 1001, fecha: '2025-10-10', hora: '10:00', paciente: 'Luis G. Fernández', doctor: 'Dra. Ana García', especialidad: 'Dermatología', motivo: 'Revisión de erupción cutánea', estado: 'Pendiente' },
+                    { id: 1002, fecha: '2025-10-11', hora: '15:30', paciente: 'Sofía M. Robles', doctor: 'Dr. Juan Pérez', especialidad: 'Medicina General', motivo: 'Chequeo anual de salud', estado: 'Aprobada' },
+                    { id: 1003, fecha: '2025-10-12', hora: '09:00', paciente: 'Javier P. Cruz', doctor: 'Dra. Ana García', especialidad: 'Dermatología', motivo: 'Consulta por acné severo', estado: 'Pendiente' },
+                    { id: 1004, fecha: '2025-10-15', hora: '11:00', paciente: 'María T. Rojas', doctor: 'Dr. Juan Pérez', especialidad: 'Medicina General', motivo: 'Fiebre persistente', estado: 'Rechazada' },
+                ];
+                localStorage.setItem(CITA_STORAGE_KEY, JSON.stringify(initialCitas));
+            }
+        }
+
+        function getStatusBadge(estado) {
+            let className = '';
+            switch (estado) {
+                case 'Aprobada':
+                    className = 'status-aprobada';
+                    break;
+                case 'Rechazada':
+                    className = 'status-rechazada';
+                    break;
+                case 'Pendiente':
+                default:
+                    className = 'status-pendiente';
+                    break;
+            }
+            return `<span class="status-badge ${className}">${estado}</span>`;
+        }
+
+        function cargarCitas() {
+            const tbody = document.getElementById('citas-body');
+            const mensaje = document.getElementById('citas-mensaje');
+            let citas = JSON.parse(localStorage.getItem(CITA_STORAGE_KEY)) || [];
+            
+            if (citas.length === 0) {
+                tbody.innerHTML = '';
+                mensaje.style.display = 'block';
+                return;
+            }
+
+            mensaje.style.display = 'none';
+            let citasHTML = '';
+
+            // Ordenar por fecha (citas más próximas primero)
+            citas.sort((a, b) => new Date(`${a.fecha} ${a.hora}`) - new Date(`${b.fecha} ${b.hora}`));
+
+            citas.forEach(cita => {
+                citasHTML += `
+                    <tr>
+                        <td>${cita.id}</td>
+                        <td>${cita.fecha} ${cita.hora}</td>
+                        <td>${cita.paciente}</td>
+                        <td>${cita.doctor} (${cita.especialidad})</td>
+                        <td>${cita.motivo}</td>
+                        <td>${getStatusBadge(cita.estado)}</td>
+                        <td>
+                            <button class="btn-action btn-approve" 
+                                onclick="cambiarEstadoCita(${cita.id}, 'Aprobada')">
+                                <i class="fas fa-check"></i> Aprobar
+                            </button>
+                            <button class="btn-action btn-reject" 
+                                onclick="cambiarEstadoCita(${cita.id}, 'Rechazada')">
+                                <i class="fas fa-times"></i> Rechazar
+                            </button>
+                            <button class="btn-action btn-delete" 
+                                onclick="eliminarCita(${cita.id})">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = citasHTML;
+        }
+
+        function cambiarEstadoCita(id, nuevoEstado) {
+            let citas = JSON.parse(localStorage.getItem(CITA_STORAGE_KEY)) || [];
+            
+            citas = citas.map(cita => {
+                if (cita.id === id) {
+                    return { ...cita, estado: nuevoEstado };
+                }
+                return cita;
+            });
+
+            localStorage.setItem(CITA_STORAGE_KEY, JSON.stringify(citas));
+            cargarCitas();
+            alert(`Cita ${id} cambiada a estado: ${nuevoEstado}.`);
+        }
+
+        function eliminarCita(id) {
+            if (confirm(`¿Estás seguro de eliminar la cita ID ${id}?`)) {
+                let citas = JSON.parse(localStorage.getItem(CITA_STORAGE_KEY)) || [];
+                const citasActualizadas = citas.filter(cita => cita.id !== id);
+                
+                localStorage.setItem(CITA_STORAGE_KEY, JSON.stringify(citasActualizadas));
+                cargarCitas();
+                alert(`Cita ID ${id} eliminada.`);
+            }
+        }
+
+        // Ejecutar las funciones al cargar la página
+        inicializarCitas();
+        cargarCitas();
+    </script>
+</body>
+</html>

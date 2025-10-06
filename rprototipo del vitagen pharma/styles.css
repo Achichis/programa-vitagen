@@ -1,0 +1,1206 @@
+/* ==================================== */
+/* VARIABLES Y ESTILOS GLOBALES (BLOQUES DE COLOR) */
+/* ==================================== */
+:root {
+    /* Paleta inspirada en el diseño geométrico (Azul y Rosa/Rojo) */
+    --color-principal: #3a7bd5; /* Azul primario para acentos y botones */
+    --color-bloque-a: #f06292; /* Rosa/Rojo llamativo (Bloque de fondo/Acción) */
+    --color-bloque-b: #64b5f6; /* Azul claro (Bloque de fondo/Hero) */
+    --color-secundario: #1a1a1a; /* Texto principal oscuro (Casi negro) */
+    --color-fondo: #f4f4f9; /* Fondo general muy claro (Gris azulado) */
+    --color-claro: #fff; /* Blanco */
+    --sombra-card: none; 
+}
+
+* {
+    /* Reset básico para un control total del layout */
+    box-sizing: border-box; 
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    /* Tipografía principal y configuración de fondo */
+    font-family: 'Poppins', 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+    color: var(--color-secundario);
+    background-color: var(--color-fondo);
+    line-height: 1.5;
+}
+
+h1, h2, h3 {
+    /* Tipografía de énfasis para títulos */
+    font-family: 'Montserrat', 'Arial Black', sans-serif; 
+    font-weight: 800;
+    letter-spacing: -1px; 
+}
+
+a {
+    /* Estilos base para todos los enlaces */
+    text-decoration: none;
+    color: var(--color-secundario);
+    transition: color 0.3s;
+}
+
+/* ==================================== */
+/* ENCABEZADO Y NAVEGACIÓN */
+/* ==================================== */
+header {
+    /* Contenedor principal del encabezado (Sticky en la parte superior) */
+    background-color: var(--color-claro);
+    padding: 20px 5%;
+    display: flex;
+    justify-content: space-between; /* Espacia el logo y los enlaces */
+    align-items: center;
+    border-bottom: 1px solid #eee; 
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* ESTILOS PARA EL LOGOTIPO */
+.logo-link {
+    text-decoration: none;
+    display: flex; 
+    align-items: center; 
+}
+.logo-img {
+    height: 77px; /* Tamaño del logo */
+    margin-right: 20px; 
+    object-fit: contain; 
+}
+header h1 {
+    /* Estilo del texto del logo */
+    font-size: 1.8em;
+    color: var(--color-secundario);
+    font-weight: 900;
+    line-height: 1; 
+}
+
+.nav-links {
+    /* Contenedor de los enlaces de navegación */
+    display: flex;
+    align-items: center;
+    gap: 25px; 
+}
+
+.nav-links a {
+    /* Estilos generales de los enlaces */
+    padding: 5px 0;
+    font-weight: 500;
+    font-size: 0.95em;
+    color: var(--color-secundario);
+}
+.nav-links a:hover {
+    color: var(--color-principal); /* Efecto hover */
+}
+
+/* Icono y Contador del Carrito */
+.nav-links .cart-icon {
+    font-size: 1.3em; 
+    color: var(--color-secundario);
+}
+.nav-links .cart-count {
+    /* Estilo de la burbuja del contador */
+    background-color: var(--color-principal);
+    color: var(--color-claro);
+    font-size: 0.7em;
+    border-radius: 50%;
+    padding: 2px 5px;
+}
+
+/* Botón de Inicio de Sesión (Estilo principal) */
+#btn-login-nav {
+    background-color: var(--color-principal);
+    color: var(--color-claro);
+    padding: 8px 18px;
+    border-radius: 5px;
+    font-weight: 600;
+}
+#btn-login-nav:hover {
+    background-color: #0056b3;
+}
+
+/* ==================================== */
+/* SECCIÓN HERO (Espaciado Corregido) */
+/* ==================================== */
+.hero {
+    /* Contenedor principal con fondo de color Bloque B */
+    background-color: var(--color-bloque-b); 
+    height: 70vh; 
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; 
+    align-items: flex-start; 
+    padding: 120px 10% 80px 10%; /* Padding ajustado para espacio superior */
+    text-align: left;
+    color: var(--color-claro); 
+    position: relative;
+    overflow: hidden;
+}
+
+.hero h1 {
+    /* Título principal del Hero */
+    font-size: 5em; 
+    color: var(--color-claro); 
+    margin-bottom: 20px;
+    line-height: 1; 
+    max-width: 800px;
+}
+
+.hero p {
+    /* Subtítulo/Descripción del Hero */
+    font-size: 1.2em;
+    margin-bottom: 40px;
+    color: rgba(255, 255, 255, 0.9); 
+    max-width: 600px;
+}
+
+/* Estilos de la barra de búsqueda rápida */
+.busqueda-rapida {
+    background-color: var(--color-claro); 
+    padding: 15px;
+    border-radius: 10px; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
+    max-width: 600px;
+    width: 100%;
+    margin: 0; 
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border: none;
+}
+
+.busqueda-rapida input[type="text"] {
+    /* Campo de texto de búsqueda */
+    flex-grow: 1;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1em;
+    background-color: var(--color-claro); 
+    color: var(--color-secundario);
+}
+
+.busqueda-rapida button {
+    /* Botón de envío de búsqueda */
+    padding: 10px 25px;
+    background-color: var(--color-principal); 
+    color: var(--color-claro);
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* ==================================== */
+/* CARRUSEL DE SERVICIOS (Bloques Geométricos) */
+/* ==================================== */
+
+.slider-container {
+    /* Contenedor principal de la sección de servicios */
+    padding: 80px 10%; 
+    text-align: left; 
+    background-color: var(--color-fondo);
+    overflow: hidden; 
+    position: relative;
+    max-width: 100%; 
+    margin: 0 auto; 
+    border-top: 1px solid #eee; 
+}
+
+.slider-container h2 {
+    /* Título de la sección */
+    font-size: 3em;
+    color: var(--color-secundario);
+    padding-top: 0; 
+    margin-bottom: 50px;
+}
+
+.slider-wrapper {
+    /* Contenedor flexible de las tarjetas (para el desplazamiento) */
+    display: flex;
+    gap: 20px; 
+    transition: transform 0.5s ease-in-out;
+    justify-content: flex-start;
+}
+
+/* Estilo de cada tarjeta: Bloques sólidos */
+.opcion-card { 
+    flex-shrink: 0;
+    width: 350px; 
+    background-color: var(--color-claro); 
+    padding: 40px;
+    border-radius: 0; 
+    border: 1px solid #ddd; 
+    box-shadow: none; 
+    transition: background-color 0.3s;
+    text-align: left;
+    min-height: 350px; 
+    
+    /* Configuración para alinear el botón al final */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+/* Estilos específicos para la primera tarjeta (Bloque A: Rosa/Rojo) */
+.opcion-card:nth-child(1) {
+    background-color: var(--color-bloque-a);
+    color: var(--color-claro);
+    border: none;
+}
+.opcion-card:nth-child(1) h3,
+.opcion-card:nth-child(1) p {
+    color: var(--color-claro);
+}
+.opcion-card:nth-child(1) i {
+    color: var(--color-claro);
+}
+
+.opcion-card:hover {
+    opacity: 0.9;
+}
+
+.opcion-card i {
+    /* Estilo de los iconos */
+    font-size: 2.5em;
+    margin-bottom: 25px;
+    color: var(--color-principal); 
+}
+
+.opcion-card h3 {
+    /* Títulos de las tarjetas */
+    margin-top: 0;
+    font-size: 1.8em;
+    color: var(--color-secundario);
+    margin-bottom: 10px;
+}
+
+.opcion-card p {
+    /* Descripciones de las tarjetas */
+    color: #6c757d;
+    flex-grow: 1; /* Permite que el párrafo empuje el botón hacia abajo */
+    margin-top: 10px;
+    margin-bottom: 5px; 
+}
+
+.btn-card {
+    /* Estilo de enlace de acción al final de la tarjeta */
+    display: inline-block; 
+    padding: 0;
+    color: var(--color-principal);
+    font-weight: 700;
+    border-bottom: 2px solid var(--color-principal); 
+    margin-top: auto; /* CLAVE: Alinea el botón al final del contenedor flexible */
+}
+
+/* Ajuste de color del botón dentro del bloque de color A */
+.opcion-card:nth-child(1) .btn-card {
+    color: var(--color-claro);
+    border-bottom: 2px solid var(--color-claro);
+}
+
+/* Puntos de navegación del carrusel (Dots) */
+.slider-dots {
+    text-align: left; 
+    padding-top: 40px;
+}
+.dot {
+    /* Estilo del punto inactivo */
+    display: inline-block;
+    height: 10px;
+    width: 10px;
+    margin: 0 5px;
+    background-color: #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dot.active {
+    /* Estilo del punto activo */
+    background-color: var(--color-principal);
+    width: 25px;
+    border-radius: 5px;
+}
+
+
+/* ==================================== */
+/* LISTADO DE DOCTORES Y PRODUCTOS (Cuadrículas) */
+/* ==================================== */
+
+/* --- CONFIGURACIÓN PRINCIPAL DE LA TARJETA DE DOCTOR --- */
+.doctor-card {
+    background-color: var(--color-claro);
+    border: 1px solid #ddd;
+    text-align: center;
+    padding: 30px; 
+    border-radius: 8px; 
+    transition: background-color 0.3s;
+}
+
+/* --- ESTILOS CORREGIDOS PARA IMAGEN DE DOCTOR (TAMAÑO FIJO) --- */
+.doctor-img-container {
+    /* Contenedor: Define el área cuadrada y el borde */
+    width: 150px; 
+    height: 150px;
+    margin: 0 auto 15px auto; 
+    overflow: hidden; 
+    border-radius: 8px; 
+    border: 2px solid var(--color-bloque-a); 
+}
+
+.doctor-img-container img {
+    /* Imagen: Asegura que la imagen llene el contenedor sin distorsión */
+    width: 100%; 
+    height: 100%;
+    object-fit: cover; 
+    display: block; 
+}
+/* --------------------------------------------------- */
+
+.doctor-card:hover {
+    background-color: #e3f2fd; /* Efecto hover suave */
+}
+
+.doctor-card .btn-agendar {
+    /* Estilo del botón de agendar cita */
+    background-color: var(--color-principal);
+    color: var(--color-claro);
+    border-radius: 6px;
+    padding: 10px;
+    display: block;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* Tarjetas de Producto (ESTILO DETALLADO - Sobrescribe estilos anteriores) */
+.producto-card {
+    background-color: var(--color-claro);
+    border: 1px solid #ddd;
+    text-align: left; /* Alineación a la izquierda para el detalle */
+    padding: 20px;
+    border-radius: 0; 
+    box-shadow: none;
+    transition: background-color 0.3s;
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px;
+}
+.producto-card h3 {
+    font-size: 1.5em;
+    color: var(--color-secundario);
+    margin-bottom: 5px;
+}
+.producto-descripcion {
+    font-size: 0.9em;
+    color: #6c757d;
+    flex-grow: 1;
+    margin-bottom: 10px;
+}
+.producto-precio {
+    font-size: 1.4em;
+    font-weight: 700;
+    color: var(--color-principal); 
+    margin-bottom: 15px;
+}
+.producto-card .btn-agendar {
+    background-color: var(--color-bloque-a); /* Rosa/Rojo para acción de producto */
+}
+
+/* REGLA DE CUADRÍCULA (aplica a ambos listados de resultados) */
+.resultados-grid .doctor-card,
+.resultados-grid .producto-card {
+    /* Configuración para 3 columnas en pantallas grandes */
+    width: calc(33.333% - 20px); 
+}
+
+
+/* ==================================== */
+/* PIE DE PÁGINA */
+/* ==================================== */
+footer {
+    background-color: var(--color-secundario); /* Fondo oscuro */
+    color: var(--color-claro);
+    padding: 40px 10%;
+    border-top: none;
+    margin-top: 0;
+    text-align: left;
+}
+
+/* MEDIA QUERIES (Responsividad) */
+@media (max-width: 1200px) {
+    .hero h1 {
+        font-size: 4em;
+    }
+}
+@media (max-width: 992px) {
+    /* Ajustes para tabletas */
+    .hero {
+        align-items: center;
+        text-align: center;
+        padding: 60px 5%;
+        height: auto;
+    }
+    .hero h1 {
+        font-size: 3em;
+        max-width: 100%;
+    }
+    .resultados-grid .doctor-card,
+    .resultados-grid .producto-card {
+        /* Pasa a 2 columnas */
+        width: calc(50% - 15px); 
+        text-align: center;
+    }
+    .opcion-card {
+        /* Tarjetas de servicio a 2 columnas */
+        width: calc(50% - 10px);
+    }
+}
+@media (max-width: 600px) {
+    /* Ajustes para móviles */
+    .opcion-card, .doctor-card, .producto-card {
+        width: 100%; /* Una sola columna */
+    }
+    .logo-img { 
+        height: 30px; 
+    }
+    header h1 {
+        font-size: 1.5em;
+    }
+}
+/* ==================================== */
+/* ESTILOS DE LA SECCIÓN DE FARMACIA/PRODUCTOS (NUEVOS) */
+/* ==================================== */
+
+/* Contenedor de la Cuadrícula */
+.productos-grid {
+    display: grid;
+    /* Usa un layout adaptable: 4 columnas en escritorio, adaptable a menos */
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+    padding: 20px 0;
+}
+
+/* Estilo de cada Tarjeta de Producto (Sobrescribe las reglas anteriores para esta sección) */
+.producto-card {
+    background-color: var(--color-claro); 
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Sombra para efecto 3D */
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.producto-card:hover {
+    transform: translateY(-5px); /* Pequeño levantamiento */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); 
+}
+
+/* Imagen del Producto */
+.producto-card .producto-img {
+    width: 100%;
+    max-height: 180px; 
+    object-fit: contain; 
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+/* Título del Producto */
+.producto-card h4 {
+    font-size: 1.1em;
+    color: var(--color-secundario);
+    font-weight: 700;
+    margin-bottom: 5px;
+    min-height: 3em; 
+    line-height: 1.5;
+}
+
+/* Descripción Corta */
+.producto-card p {
+    font-size: 0.9em;
+    color: #6c757d;
+    min-height: 2.4em; 
+    margin-bottom: 15px;
+}
+
+/* Precio */
+.producto-card .precio {
+    font-size: 1.4em;
+    font-weight: 900;
+    color: var(--color-principal); 
+    margin-bottom: 20px;
+}
+
+/* Botón "Ver Producto" o "Comprar" */
+.btn-comprar {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: var(--color-bloque-a); /* Rosa/Rojo para la acción */
+    color: var(--color-claro);
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.btn-comprar:hover {
+    background-color: #d13a69; 
+}
+
+/* Responsividad de la cuadrícula */
+@media (max-width: 992px) {
+    .productos-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+}
+@media (max-width: 576px) {
+    .productos-grid {
+        grid-template-columns: 1fr;
+    }
+}
+/* ==================================== */
+/* ESTILOS DEL CARRITO DE COMPRAS */
+/* ==================================== */
+
+.carrito-page {
+    /* Contenedor principal de la página de carrito */
+    max-width: 1000px; 
+}
+
+.cart-items {
+    /* Lista de ítems del carrito */
+    list-style: none;
+    padding: 0;
+    margin: 30px 0;
+    border-top: 2px solid var(--color-principal); 
+}
+
+/* Encabezados de la tabla (para escritorio) */
+.cart-header {
+    display: none; 
+    background-color: #f8f9fa;
+    padding: 15px 10px;
+    border-bottom: 1px solid #dee2e6;
+    font-weight: 700;
+    color: var(--color-secundario);
+}
+
+/* Estructura de columnas (Grid) para escritorio/tableta */
+.cart-header, .cart-item {
+    display: grid;
+    /* 5 columnas: Producto (grande), Precio Unitario, Cantidad, Subtotal, Acciones (pequeña) */
+    grid-template-columns: 2.5fr 1fr 1fr 1fr 0.5fr; 
+    align-items: center;
+    gap: 10px;
+}
+
+.cart-item {
+    /* Fila de cada producto */
+    border-bottom: 1px solid #e9ecef;
+    padding: 15px 0;
+}
+
+/* Primera columna: Producto (Imagen + Info) */
+.item-producto {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.item-img {
+    /* Estilo de la imagen del producto en el carrito */
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    border-radius: 5px;
+}
+
+.item-info h4 {
+    font-size: 1em;
+    font-weight: 600;
+    margin: 0;
+}
+
+.item-info p {
+    font-size: 0.85em;
+    color: #6c757d;
+    margin: 0;
+}
+
+/* Columna de Cantidad (Input) */
+.item-quantity input {
+    width: 60px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 1em;
+}
+
+/* Estilos de Precio y Subtotal */
+.item-precio-unitario, .item-subtotal-item {
+    font-weight: 700;
+    color: var(--color-principal);
+    text-align: center;
+}
+
+/* Botón Eliminar (Icono) */
+.item-actions {
+    text-align: center;
+}
+
+.btn-eliminar {
+    background: none;
+    border: none;
+    color: var(--color-bloque-a); /* Rosa/Rojo para la acción de eliminar */
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: color 0.2s;
+}
+
+.btn-eliminar:hover {
+    color: #d13a69; 
+}
+
+/* RESUMEN DEL CARRITO (Flotado a la derecha) */
+.cart-summary {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 25px;
+    border-radius: 8px;
+    width: 350px;
+    float: right; /* Mueve el resumen a la derecha en escritorio */
+    margin-top: 20px;
+}
+
+.cart-summary h3 {
+    /* Título del resumen */
+    margin-top: 0;
+    color: var(--color-secundario);
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.summary-line {
+    /* Líneas de Subtotal/Envío */
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 1em;
+}
+
+.summary-line.total-line {
+    /* Línea de Total (más grande y resaltada) */
+    font-size: 1.2em;
+    font-weight: 900;
+    color: var(--color-principal);
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 2px solid var(--color-principal);
+}
+
+.total-line .total-price {
+    font-size: 1.2em;
+}
+
+.btn-checkout {
+    /* Botón de Pagar */
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    background-color: var(--color-secundario); 
+    color: var(--color-claro);
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+.btn-checkout:hover {
+    background-color: #004c4c; 
+}
+
+.cart-footer-actions {
+    /* Contenedor de botones de acción debajo de la tabla */
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.btn-seguir-comprando {
+    /* Botón de seguir comprando */
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #6c757d;
+    color: var(--color-claro);
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+.btn-seguir-comprando:hover {
+    background-color: #5a6268;
+}
+
+/* ==================================== */
+/* RESPONSIVIDAD PARA MÓVILES */
+/* ==================================== */
+@media (min-width: 768px) {
+    .cart-header {
+        display: grid; /* Muestra el encabezado en tabletas y escritorio */
+    }
+}
+
+@media (max-width: 767px) {
+    /* Estilos específicos para pantallas pequeñas */
+    .carrito-page {
+        max-width: 100%;
+    }
+    
+    /* Configuración de la Fila del Ítem (Estructura apilada) */
+    .cart-item {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "producto"
+            "precio"
+            "cantidad"
+            "subtotal"
+            "acciones";
+        padding: 15px 10px;
+    }
+
+    /* Asignación de áreas para el orden apilado */
+    .item-producto { grid-area: producto; justify-content: start; }
+    .item-precio-unitario { grid-area: precio; }
+    .item-quantity { grid-area: cantidad; }
+    .item-subtotal-item { grid-area: subtotal; }
+    .item-actions { grid-area: acciones; text-align: left; margin-top: 10px;}
+
+    /* Muestra etiquetas para cada valor */
+    .item-precio-unitario::before,
+    .item-quantity::before,
+    .item-subtotal-item::before {
+        content: attr(data-label);
+        font-weight: 600;
+        margin-right: 10px;
+        color: var(--color-secundario);
+    }
+    
+    .item-precio-unitario, .item-quantity, .item-subtotal-item {
+        text-align: left;
+        padding-top: 5px;
+        border-top: 1px dashed #e9ecef;
+        margin-top: 5px;
+    }
+
+    /* Mueve el resumen debajo de los productos */
+    .cart-summary {
+        width: 100%;
+        float: none;
+    }
+    
+    .cart-footer-actions {
+        text-align: center;
+    }
+}
+/* ==================================== */
+/* ESTILOS DE FORMULARIOS GENERALES (Login, Registro, Contratación) */
+/* ==================================== */
+
+/* Contenedor principal de la página (para centrar y limitar ancho en formularios) */
+.content-page {
+    padding: 30px;
+    margin: 30px auto;
+    background-color: var(--color-claro);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 800px; /* Ancho estándar para formularios */
+}
+
+/* Grupo de etiquetas e inputs */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--color-secundario); 
+    font-size: 1em;
+}
+
+/* Estilos de los campos de texto, email, password, etc. */
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="tel"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    box-sizing: border-box; 
+    font-size: 1em;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    /* Efecto de foco al seleccionar el campo */
+    border-color: var(--color-principal); 
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 143, 0.25); 
+    outline: none;
+}
+
+/* Botón de envío principal del formulario */
+.btn-form-submit {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background-color: var(--color-secundario); /* Color oscuro */
+    color: white;
+    text-align: center;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 700;
+    margin-top: 15px;
+    transition: background-color 0.3s;
+    text-decoration: none; 
+}
+
+.btn-form-submit:hover {
+    background-color: #004c4c; 
+}
+
+.btn-form-submit i {
+    margin-right: 8px;
+}
+
+/* Estilo para los títulos de la página de formularios */
+.content-page h2 {
+    color: var(--color-principal);
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 900;
+    font-size: 2em;
+}
+
+/* Adaptación para pantallas pequeñas */
+@media (max-width: 600px) {
+    .content-page {
+        padding: 20px;
+        margin: 20px 10px;
+    }
+}
+
+/* ==================================== */
+/* ESTILOS DEL PANEL DE ADMINISTRACIÓN */
+/* ==================================== */
+
+/* Encabezado especial para la página de Admin */
+.admin-header {
+    background-color: var(--color-secundario); /* Color oscuro para destacar el panel */
+    color: var(--color-claro);
+    padding: 20px 5%;
+    text-align: center;
+    border-bottom: none;
+    position: static; 
+}
+.admin-header h1 {
+    margin: 0;
+    font-size: 1.8em;
+    font-weight: 900;
+    color: var(--color-claro);
+}
+
+/* Estilos para el logo dentro del header admin */
+.admin-header .logo-img {
+    height: 50px; 
+    margin-right: 15px;
+}
+.admin-header .logo-link {
+     /* Centra el logo y el título */
+     display: flex; 
+     align-items: center; 
+     justify-content: center; 
+     width: 100%; 
+     margin-bottom: 10px;
+     text-decoration: none;
+}
+
+/* Contenido del Panel */
+.admin-panel-content {
+    /* Contenedor principal del dashboard de administrador */
+    max-width: 1000px;
+    margin-top: 30px;
+    padding: 30px;
+    box-shadow: none; 
+    background-color: transparent; 
+}
+.admin-panel-content h2 {
+    text-align: left;
+    color: var(--color-secundario);
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+/* Títulos de sección */
+.admin-panel-content h3 {
+    color: var(--color-principal);
+    margin-top: 40px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    font-size: 1.5em;
+}
+
+/* Menú de opciones (Cuadrícula de enlaces) */
+.admin-menu {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.admin-menu li a {
+    /* Estilo de cada botón/opción del menú */
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background-color: var(--color-claro);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    color: var(--color-secundario);
+    text-decoration: none;
+    transition: background-color 0.3s, transform 0.2s;
+    font-weight: 700;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.admin-menu li a:hover {
+    background-color: #e3f2fd; 
+    color: var(--color-principal);
+    transform: translateY(-2px);
+}
+
+.admin-menu i {
+    margin-right: 15px;
+    font-size: 1.5em;
+    color: var(--color-principal);
+}
+
+/* Ajuste del botón Cerrar Sesión en el Dashboard */
+.admin-panel-content .btn-form-submit {
+    width: 300px; 
+    margin: 40px auto 20px auto;
+    background-color: var(--color-bloque-a); /* Color de alerta/cierre */
+}
+.admin-panel-content .btn-form-submit:hover {
+    background-color: #d13a69;
+}
+.admin-panel-content .btn-logout {
+    /* Estilo específico para el botón de Cerrar Sesión (similar al anterior) */
+    width: 300px; 
+    margin: 40px auto 20px auto;
+    background-color: var(--color-bloque-a); 
+}
+.admin-panel-content .btn-logout:hover {
+    background-color: #d13a69;
+}
+/* aqui termina el estilo del admin */
+
+/* Burbuja Flotante para el Chatbot */
+.chatbot-bubble {
+    position: fixed; 
+    bottom: 25px; 
+    right: 25px;
+    
+    width: 60px;
+    height: 60px;
+    background-color: var(--color-principal); 
+    color: var(--color-claro);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s, background-color 0.2s, opacity 0.3s;
+    font-size: 1.5em;
+    z-index: 2000; 
+}
+
+.chatbot-bubble:hover {
+    transform: scale(1.05);
+    background-color: #2b61b3; 
+}
+
+/* Oculta la burbuja (opcional, si se implementa en JS) */
+.chatbot-bubble.hidden {
+    opacity: 0;
+    pointer-events: none; 
+}
+
+
+/* Ventana Principal del Chat */
+.chatbot-window {
+    position: fixed;
+    bottom: 100px; 
+    right: 25px;
+    
+    width: 350px;
+    height: 450px;
+    background-color: var(--color-claro);
+    border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    z-index: 2000; 
+    
+    /* Reglas de ocultamiento para la animación de apertura */
+    opacity: 0;
+    visibility: hidden; 
+    transform: scale(0.1) translateY(50%); 
+    transform-origin: bottom right; 
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animación de rebote */
+}
+
+/* es el estado de Apertura */
+.chatbot-window.open {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1) translateY(0); 
+}
+
+/* chatbot encabezado */
+.chatbot-header {
+    padding: 15px;
+    background-color: var(--color-principal);
+    color: var(--color-claro);
+    font-weight: 700;
+    font-size: 1.1em;
+    text-align: center;
+}
+
+/* Área de Mensajes */
+.chatbot-messages {
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background-color: #f7f7f7;
+}
+
+/* Estilos de Mensaje individual */
+.message {
+    padding: 10px 15px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    max-width: 85%;
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+.user-message {
+    /* Mensajes del usuario (Alineados a la derecha) */
+    background-color: var(--color-principal); 
+    color: var(--color-claro);
+    margin-left: auto; 
+    border-bottom-right-radius: 2px;
+}
+
+.bot-message {
+    /* Mensajes del bot (Alineados a la izquierda) */
+    background-color: var(--color-claro);
+    color: var(--color-secundario);
+    margin-right: auto; 
+    border: 1px solid #eee;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border-bottom-left-radius: 2px;
+}
+
+/* Área de Input y Botón de Envío */
+.chatbot-input {
+    display: flex;
+    border-top: 1px solid #ddd;
+    padding: 10px;
+    background-color: var(--color-claro);
+}
+
+#chatbot-input-text {
+    /* Campo de texto de entrada */
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 8px 15px;
+    font-size: 1em;
+    margin-right: 10px;
+    outline: none;
+}
+
+#chatbot-send {
+    /* Botón de envío (circular) */
+    background-color: var(--color-bloque-a);
+    color: var(--color-claro);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#chatbot-send:hover {
+    background-color: #d13a69;
+}
+
+/* Estilos del botón flotante de WhatsApp dentro de los mensajes */
+.btn-whatsapp-chat {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 15px;
+    background-color: #25d366; /* Verde WhatsApp */
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+}
+
+.btn-whatsapp-chat i {
+    margin-right: 8px;
+    font-size: 1.2em;
+}
+
+.btn-whatsapp-chat:hover {
+    background-color: #128c7e;
+}
+
+/* MEDIA QUERY para pantallas pequeñas: Ajusta la posición de la ventana */
+@media (max-width: 500px) {
+    .chatbot-window {
+        width: 90%;
+        height: 80vh;
+        right: 5%;
+        bottom: 90px;
+    }
+}
